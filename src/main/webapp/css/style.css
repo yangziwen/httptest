@@ -1,0 +1,68 @@
+@CHARSET "GBK";
+body { 
+	padding-top: 70px; 
+	font-size: 14px;
+}
+.top-bar ul>li {
+	font-size: 14x;
+	font-family: 'Microsoft Yahei';
+	font-weight: bold;
+}
+.top-bar .title {
+	font-size: 25px;
+}
+.top-bar {
+	font-size: 16px;
+}
+ul.nav.submenu li a {
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}
+ul.nav.submenu li:last-child  a {
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-color: #ddd;
+}
+.nav-pills > li > a.has-submenu {
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+}
+#J_productMenu {
+	min-width: 125px; left: 0px;
+}
+table.table {
+	text-align: center;
+}
+table.table > thead > tr > th {
+	text-align: center;
+	background-color: #eee;
+}
+table.table > tbody > tr > td {
+	line-height: 25px;
+}
+.btn {
+	font-family: 'Microsoft Yahei';
+}
+.btn-lg-font {
+	font-size: 16px;
+}
+.modal-header {
+	font-family: 'Microsoft Yahei';
+}
+ul.submenu {
+	overflow: hidden;
+}
+
+/** imageTailor begin **/
+.handler { width: 10px; height: 10px; background-color: #666; position: absolute; }
+.left-handler{ left: 0px; }
+.top-handler { top: 0px; }
+.right-handler { right: 0px; }
+.bottom-handler { bottom: 0px; }
+.left-handler.top-handler { cursor: nw-resize; }
+.left-handler.bottom-handler { cursor: sw-resize; }
+.right-handler.top-handler { cursor: ne-resize; }
+.right-handler.bottom-handler { cursor: se-resize; }
+.img-mask { cursor: crosshair; } 
+/** imageTailor end **/
