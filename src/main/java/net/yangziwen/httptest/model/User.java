@@ -6,7 +6,7 @@ import javax.persistence.Table;
 
 import net.yangziwen.httptest.model.base.AbstractModel;
 
-@Table(name = "user")
+@Table
 public class User extends AbstractModel {
 
 	@Id

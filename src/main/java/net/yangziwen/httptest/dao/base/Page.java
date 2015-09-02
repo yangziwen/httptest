@@ -5,28 +5,31 @@ import java.util.List;
 
 public class Page<E> {
 	
-	public static final String DEFAULT_START = "0";
+	public static final String DEFAULT_OFFSET = "0";
 	public static final String DEFAULT_LIMIT = "30";
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static final Page EMPTY_PAGE = new Page(0, 0, 0, Collections.emptyList());
 
-	private int start;
+	private int offset;
 	private int limit;
 	private int count;
 	private List<E> list;
 	
 	public Page() {}
 	
-	public Page(int start, int limit, int count, List<E> list) {
-		this.start = start;
+	public Page(int offset, int limit, int count, List<E> list) {
+		this.offset = offset;
 		this.limit = limit;
 		this.count = count;
 		this.list = list != null? list: Collections.<E>emptyList();
 	}
 	
-	public int getStart() {
-		return start;
+	public int getOffset() {
+		return offset;
 	}
-	public void setStart(int start) {
-		this.start = start;
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 	public int getLimit() {
 		return limit;
@@ -47,8 +50,9 @@ public class Page<E> {
 		this.list = list;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static <T> Page<T> emptyPage() {
-		return new Page<T>(0, 0, 0, Collections.<T>emptyList());
+		return (Page<T>) EMPTY_PAGE;
 	}
 	
 }

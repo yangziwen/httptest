@@ -15,12 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import net.yangziwen.httptest.model.base.AbstractModel;
 
-public class AbstractJdbcDaoImpl<E extends AbstractModel>  extends AbstractReadOnlyJdbcDaoImpl<E> {
+public abstract class AbstractJdbcDaoImpl<E extends AbstractModel>  extends AbstractReadOnlyJdbcDaoImpl<E> {
 	
 	protected final String updateSql = generateUpdateSql(beanMapping.getTableName(), beanMapping.getIdField(), beanMapping.getFieldColumnMapping());
 	
@@ -51,15 +50,28 @@ public class AbstractJdbcDaoImpl<E extends AbstractModel>  extends AbstractReadO
 		return updateBuff.toString();
 	}
 	
+	protected SqlParameterSource createSqlParameterSource(E entity) {
+		return new BeanPropertySqlParameterSource(entity);
+	}
+	
+	protected SqlParameterSource[] createBatchSqlParameterSource(E[] entitys) {
+		SqlParameterSource[] batch = new SqlParameterSource[entitys.length];
+		for (int i = 0; i < entitys.length; i++) {
+			E entity = entitys[i];
+			batch[i] = createSqlParameterSource(entity);
+		}
+		return batch;
+	}
+	
 	//------------- 以上为一些工具方法 -------------//
 	
 	public void save(E entity) {
-		Number id = jdbcInsert.executeAndReturnKey(new BeanPropertySqlParameterSource(entity));
+		Number id = jdbcInsert.executeAndReturnKey(createSqlParameterSource(entity));
 		entity.setId(id.longValue());
 	}
 	
 	public void update(E entity) {
-		jdbcTemplate.update(updateSql, new BeanPropertySqlParameterSource(entity));
+		jdbcTemplate.update(updateSql, createSqlParameterSource(entity));
 	}
 
 	public void saveOrUpdate(E entity) {
@@ -114,8 +126,8 @@ public class AbstractJdbcDaoImpl<E extends AbstractModel>  extends AbstractReadO
 		}
 		int insertRows = 0;
 		for(int i = 0, l = entities.length; i < l; i += batchSize) {
-			SqlParameterSource[] paramSources = SqlParameterSourceUtils.createBatch(
-					ArrayUtils.subarray(entities, i, Math.min(i + batchSize, l)));
+			SqlParameterSource[] paramSources = createBatchSqlParameterSource(
+					(E[]) ArrayUtils.subarray(entities, i, Math.min(i + batchSize, l)));
 			for(int c: jdbcInsert.executeBatch(paramSources)) {
 				insertRows += c;
 			}
@@ -155,8 +167,8 @@ public class AbstractJdbcDaoImpl<E extends AbstractModel>  extends AbstractReadO
 		}
 		int updateRows = 0;
 		for(int i = 0, l = entities.length; i < l; i += batchSize) {
-			SqlParameterSource[] paramSources = SqlParameterSourceUtils.createBatch(
-					ArrayUtils.subarray(entities, i, Math.min(i + batchSize, l)));
+			SqlParameterSource[] paramSources = createBatchSqlParameterSource(
+					(E[]) ArrayUtils.subarray(entities, i, Math.min(i + batchSize, l)));
 			for(int c: jdbcTemplate.batchUpdate(updateSql, paramSources)) {
 				updateRows += c;
 			}

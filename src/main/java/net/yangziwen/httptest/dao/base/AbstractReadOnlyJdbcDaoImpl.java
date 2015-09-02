@@ -20,22 +20,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import net.yangziwen.httptest.model.base.AbstractModel;
 import net.yangziwen.httptest.util.ClassUtil;
 
-public class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
+public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 
 	/** SQL_DEBUG == true时，会打印所有查询的sql **/
 	protected static final boolean SQL_DEBUG = BooleanUtils.toBoolean(System.getProperty("jdbc.sql.debug"));
 	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected BeanMapping<E> beanMapping = new BeanMapping(ClassUtil.getSuperClassGenericType(this.getClass(), 0));
+	@SuppressWarnings("unchecked")
+	protected BeanMapping<E> beanMapping = createBeanMapping(ClassUtil.getSuperClassGenericType(this.getClass(), 0));
 	
 	protected NamedParameterJdbcTemplate jdbcTemplate;
+	
+	protected BeanMapping<E> createBeanMapping(Class<E> entityClass) {
+		return new BeanMapping<E>(entityClass);
+	}
 	
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
@@ -50,8 +56,8 @@ public class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 		return first(new QueryParamMap().addParam(beanMapping.getIdColumn(), id));
 	}
 
-	public List<E> list(int offset, int limit, Map<String, Object> params) {
-		String sql = generateSqlByParam(offset, limit, params);
+	public List<E> list(int start, int limit, Map<String, Object> params) {
+		String sql = generateSqlByParam(start, limit, params);
 		return doList(sql, params);
 	}
 
@@ -69,9 +75,9 @@ public class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 	
 	protected List<E> doList(String sql, Map<String, Object> params, ResultSetExtractor<List<E>> rse) {
 		if(SQL_DEBUG) {
-			return outputLogInfoWithTimespan(now(), jdbcTemplate.query(sql, params, rse), now(), sql);
+			return outputLogInfoWithTimespan(now(), jdbcTemplate.query(sql, createSqlParameterSource(params), rse), now(), sql);
 		}
-		return jdbcTemplate.query(sql, params, rse);
+		return jdbcTemplate.query(sql, createSqlParameterSource(params), rse);
 	}
 
 	public int count(Map<String, Object> params) {
@@ -102,9 +108,9 @@ public class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 		return jdbcTemplate.queryForObject(sql, params, Integer.class);
 	}
 	
-	public Page<E> paginate(int offset, int limit, Map<String, Object> params) {
-		String sql = generateSqlByParam(offset, limit, params);
-		return new Page<E>(offset, limit, doCount(sql, params), doList(sql, params));
+	public Page<E> paginate(int start, int limit, Map<String, Object> params) {
+		String sql = generateSqlByParam(start, limit, params);
+		return new Page<E>(start, limit, doCount(sql, params), doList(sql, params));
 	}
 
 	public E first(Map<String, Object> params) {
@@ -123,41 +129,45 @@ public class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 	
 	//-------------- 以下为内部方法 ----------------//
 
+	protected SqlParameterSource createSqlParameterSource(Map<String, Object> params) {
+		return new MapSqlParameterSource(params);
+	}
+
 	protected String generateSqlByParam(Map<String, Object> params) {
 		return generateSqlByParam(0, 0, params);
 	}
 	
-	protected String generateSqlByParam(int offset, int limit, Map<String, Object> params) {
-		return generateSqlByParam(offset, limit, " select * ", params);
+	protected String generateSqlByParam(int start, int limit, Map<String, Object> params) {
+		return generateSqlByParam(start, limit, " select * ", params);
 	}
 	
 	protected String generateSqlByParam(String selectClause, Map<String, Object> params) {
 		return generateSqlByParam(0, 0, selectClause, params);
 	}
 	
-	protected String generateSqlByParam(int offset, int limit, String selectClause, Map<String, Object> params) {
-		return generateSqlByParam(offset, limit, selectClause, " from " + beanMapping.getTableName(params), params);
+	protected String generateSqlByParam(int start, int limit, String selectClause, Map<String, Object> params) {
+		return generateSqlByParam(start, limit, selectClause, " from " + beanMapping.getTableName(params), params);
 	}
 	
-	protected String generateSqlByParam(int offset, int limit, String selectClause, String fromClause, Map<String, Object> params) {
+	protected String generateSqlByParam(int start, int limit, String selectClause, String fromClause, Map<String, Object> params) {
 		return new StringBuilder()
 			.append(selectClause)
 			.append(fromClause)
 			.append(" ").append(generateWhereByParam(params))
 			.append(" ").append(generateGroupByByParam(params))
 			.append(" ").append(generateOrderByByParam(params))
-			.append(" ").append(generateLimit(offset, limit, params))
+			.append(" ").append(generateLimit(start, limit, params))
 			.toString();
 	}
 	
-	protected String generateLimit(int offset, int limit, Map<String, Object> params) {
+	protected String generateLimit(int start, int limit, Map<String, Object> params) {
 		if(limit <= 0) {
 			return "";
 		}
-		if(offset < 0) {
-			offset = 0;
+		if(start < 0) {
+			start = 0;
 		}
-		params.put(DaoConstant.OFFSET, offset);
+		params.put(DaoConstant.OFFSET, start);
 		params.put(DaoConstant.LIMIT, limit);
 		return " limit :" + DaoConstant.OFFSET + ", :" + DaoConstant.LIMIT;
 	}
@@ -335,10 +345,10 @@ public class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 	}
 	
 	public static String escapeSql(String str) {
-        if (str == null) {
-            return null;
-        }
-        return StringUtils.replace(str, "'", "''");
-    }
+		if (str == null) {
+			return null;
+		}
+		return StringUtils.replace(str, "'", "''");
+	}
 	
 }
