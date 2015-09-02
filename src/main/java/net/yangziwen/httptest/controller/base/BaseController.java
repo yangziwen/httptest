@@ -27,7 +27,7 @@ public abstract class BaseController {
 	 */
 	@ResponseBody
 	@ExceptionHandler(HttpTestException.class)
-	protected ModelMap handleLogReplayException(HttpTestException e) {
+	protected ModelMap handleHttpTestException(HttpTestException e) {
 		return new ModelMap("code", e.getErrorId()).addAttribute("errorMsg", e.getErrorMsg());
 	}
 }
