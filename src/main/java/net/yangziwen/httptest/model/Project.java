@@ -21,6 +21,11 @@ public class Project extends AbstractModel {
 	
 	public Project() {}
 	
+	public Project(String name, String baseUrl) {
+		this.name = name;
+		this.baseUrl = baseUrl;
+	}
+	
 	public long getId() {
 		return id;
 	}

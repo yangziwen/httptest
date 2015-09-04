@@ -231,12 +231,11 @@ define(function(require, exports, module){
 	 * 二级菜单收起后，一级菜单下端显示圆角
 	 */
 	(function() {
-		$('a.has-submenu').on('click', function() {
-			var $this = $(this),
-				$ul = $this.next('ul');
-			var collapsed = $ul.height() == 0,
-				radius = collapsed? 0: 5;
-			setBottomBorderRadius($this, radius);
+
+		$('a.has-submenu').next('ul').on('show.bs.collapse', function() {
+			setBottomBorderRadius($(this).prev('a.has-submenu'), 0);
+		}).on('hide.bs.collapse', function() {
+			setBottomBorderRadius($(this).prev('a.has-submenu'), 5);
 		});
 		
 		function setBottomBorderRadius(ele, radius) {
@@ -245,6 +244,7 @@ define(function(require, exports, module){
 				'border-bottom-right-radius': radius
 			});
 		}
+		
 	})();
 	
 	module.exports = {

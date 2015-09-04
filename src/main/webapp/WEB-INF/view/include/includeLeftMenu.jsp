@@ -17,7 +17,7 @@
 						<span class="pull-right glyphicon glyphicon-chevron-down"></span>
 					</a>
 					<ul id="J_caseSubmenu" class="nav submenu in" >
-						<li><a href="###"><i class="glyphicon glyphicon-chevron-right"></i> 项目信息</a></li>
+						<li><a href="${ctx_path}/project/list.htm"><i class="glyphicon glyphicon-chevron-right"></i> 项目信息</a></li>
 						<li><a href="###"><i class="glyphicon glyphicon-chevron-right"></i> 用例信息</a></li>
 					</ul>
 				</li>

@@ -1,5 +1,7 @@
 package net.yangziwen.httptest.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -7,7 +9,9 @@ import javax.persistence.Table;
 import net.yangziwen.httptest.model.base.AbstractModel;
 
 @Table
-public class User extends AbstractModel {
+public class User extends AbstractModel implements Serializable {
+	
+	private static final long serialVersionUID = 2144581448753201464L;
 
 	@Id
 	@Column

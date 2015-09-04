@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html lang="zh_CN">
 <head>
-    <title>登录页面</title>
+    <title>Http接口测试工具</title>
 	<%@include file="./include/includeCss.jsp" %>
 </head>
 <body>

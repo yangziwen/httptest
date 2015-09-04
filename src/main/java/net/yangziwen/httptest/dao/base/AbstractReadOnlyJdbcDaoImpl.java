@@ -56,8 +56,8 @@ public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 		return first(new QueryParamMap().addParam(beanMapping.getIdColumn(), id));
 	}
 
-	public List<E> list(int start, int limit, Map<String, Object> params) {
-		String sql = generateSqlByParam(start, limit, params);
+	public List<E> list(int offset, int limit, Map<String, Object> params) {
+		String sql = generateSqlByParam(offset, limit, params);
 		return doList(sql, params);
 	}
 
@@ -108,9 +108,9 @@ public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 		return jdbcTemplate.queryForObject(sql, params, Integer.class);
 	}
 	
-	public Page<E> paginate(int start, int limit, Map<String, Object> params) {
-		String sql = generateSqlByParam(start, limit, params);
-		return new Page<E>(start, limit, doCount(sql, params), doList(sql, params));
+	public Page<E> paginate(int offset, int limit, Map<String, Object> params) {
+		String sql = generateSqlByParam(offset, limit, params);
+		return new Page<E>(offset, limit, doCount(sql, params), doList(sql, params));
 	}
 
 	public E first(Map<String, Object> params) {
@@ -137,37 +137,37 @@ public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 		return generateSqlByParam(0, 0, params);
 	}
 	
-	protected String generateSqlByParam(int start, int limit, Map<String, Object> params) {
-		return generateSqlByParam(start, limit, " select * ", params);
+	protected String generateSqlByParam(int offset, int limit, Map<String, Object> params) {
+		return generateSqlByParam(offset, limit, " select * ", params);
 	}
 	
 	protected String generateSqlByParam(String selectClause, Map<String, Object> params) {
 		return generateSqlByParam(0, 0, selectClause, params);
 	}
 	
-	protected String generateSqlByParam(int start, int limit, String selectClause, Map<String, Object> params) {
-		return generateSqlByParam(start, limit, selectClause, " from " + beanMapping.getTableName(params), params);
+	protected String generateSqlByParam(int offset, int limit, String selectClause, Map<String, Object> params) {
+		return generateSqlByParam(offset, limit, selectClause, " from " + beanMapping.getTableName(params), params);
 	}
 	
-	protected String generateSqlByParam(int start, int limit, String selectClause, String fromClause, Map<String, Object> params) {
+	protected String generateSqlByParam(int offset, int limit, String selectClause, String fromClause, Map<String, Object> params) {
 		return new StringBuilder()
 			.append(selectClause)
 			.append(fromClause)
 			.append(" ").append(generateWhereByParam(params))
 			.append(" ").append(generateGroupByByParam(params))
 			.append(" ").append(generateOrderByByParam(params))
-			.append(" ").append(generateLimit(start, limit, params))
+			.append(" ").append(generateLimit(offset, limit, params))
 			.toString();
 	}
 	
-	protected String generateLimit(int start, int limit, Map<String, Object> params) {
+	protected String generateLimit(int offset, int limit, Map<String, Object> params) {
 		if(limit <= 0) {
 			return "";
 		}
-		if(start < 0) {
-			start = 0;
+		if(offset < 0) {
+			offset = 0;
 		}
-		params.put(DaoConstant.OFFSET, start);
+		params.put(DaoConstant.OFFSET, offset);
 		params.put(DaoConstant.LIMIT, limit);
 		return " limit :" + DaoConstant.OFFSET + ", :" + DaoConstant.LIMIT;
 	}

@@ -86,7 +86,7 @@ public abstract class AbstractJdbcDaoImpl<E extends AbstractModel>  extends Abst
 		deleteById(entity.getId());
 	}
 
-	public void deleteById(Long id) {
+	public void deleteById(long id) {
 		String sql = "delete from " + beanMapping.getTableName() + " where " + beanMapping.getIdColumn() + " = :id";
 		jdbcTemplate.update(sql, new MapSqlParameterSource().addValue("id", id));
 	}
