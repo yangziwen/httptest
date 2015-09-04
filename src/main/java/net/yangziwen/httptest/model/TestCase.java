@@ -27,9 +27,6 @@ public class TestCase extends AbstractModel {
 	@Column
 	private String description;
 	
-	@Column
-	private int rank;
-	
 	public TestCase() {}
 
 	public long getId() {
@@ -70,14 +67,6 @@ public class TestCase extends AbstractModel {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public int getRank() {
-		return rank;
-	}
-
-	public void setRank(int rank) {
-		this.rank = rank;
 	}
 
 	public enum Method {

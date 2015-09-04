@@ -1,5 +1,6 @@
 package net.yangziwen.httptest.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,10 @@ public class ProjectService {
 	
 	public Page<Project> getProjectPageResult(int offset, int limit, Map<String, Object> params) {
 		return projectDao.paginate(offset, limit, params);
+	}
+	
+	public List<Project> getProjectListResult(Map<String, Object> params) {
+		return projectDao.list(params);
 	}
 	
 	public void createProject(Project project) {

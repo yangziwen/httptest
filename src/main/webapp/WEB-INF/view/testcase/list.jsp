@@ -5,6 +5,11 @@
 <head>
     <title>Http接口测试工具</title>
 	<%@ include file="../include/includeCss.jsp" %>
+	<style type="text/css">
+		.padding-left-20 {
+			padding-left: 20px !important;
+		}
+	</style>
 </head>
 <body>
 
@@ -17,8 +22,8 @@
 			<div>
 			    <ul class="breadcrumb">
 			        <li>
-						当前位置: <a data-toggle="collapse" href="#J_logConfigSubmenu">埋点信息管理</a>
-						 &gt; <a href="${ctx_path}/pageInfo/list.htm">页面信息管理</a>
+						当前位置: <a data-toggle="collapse" href="#J_caseSubmenu">测试用例</a>
+						 &gt; <a href="${ctx_path}/testcase/list.htm">用例信息</a>
 			        </li> 
 			    </ul>
 			</div>
@@ -27,13 +32,13 @@
 			     	<div id="J_queryArea" style="text-align: center;">
 			     		<form class="form-horizontal col-md-offset-1 col-md-10" role="form">
 							<div class="form-group">
-								<label for="J_pageNo" class="col-sm-2 control-label">页面编号：</label>
+								<label for="J_projectName" class="col-sm-2 control-label">项目名称：</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" id="J_pageNo" name="pageNo" placeholder="请输入页面编号" />
+									<input type="text" class="form-control" id="J_projectName" name="projectName" placeholder="请输入项目名称" />
 								</div>
-								<label for="J_pageName" class="col-sm-2 control-label">页面名称：</label>
+								<label for="J_pathKeyword" class="col-sm-2 control-label">路径关键字：</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" id="J_pageName" name="pageName" placeholder="请输入页面名称" />
+									<input type="text" class="form-control" id="J_pathKeyword" name="pathKeyword" placeholder="请输入路径关键字" />
 								</div>
 							</div>
 							<div class="form-group" style="margin-bottom: 0px;">
@@ -48,45 +53,32 @@
 			     <div class="col-sm-12"><hr/></div>
 			     <div class="col-sm-12">
 			     	<div class="row">
-			     		<div class="col-sm-3">
-			     			<shiro:hasPermission name="page_info:modify">
-			     				<button class="btn btn-primary btn-lg-font" id="J_openCreateModalBtn" title="新增页面信息">新增</button>
-			     			</shiro:hasPermission>
-		     				<button class="btn btn-primary btn-lg-font" id="J_exportPageInfoBtn" title="导出excel">导出</button>
-			     		</div>
-			     		<div id="J_pagebar" class="col-sm-9">
-			     			
-			     		</div>
+			     		<div id="J_pagebar" class="col-sm-12"></div>
 			     	</div>
 			     	<div style="margin-top: 20px;">
 				     	<table class="table table-bordered table-striped table-condensed table-hover ">
 				     		<thead>
 				     			<tr>
-				     				<th style="width: 100px;">页面编号</th>
-				     				<th>页面名称</th>
-				     				<th style="width: 150px;">创建时间</th>
-				     				<th style="width: 150px;">修改时间</th>
-				     				<shiro:hasPermission name="page_info:modify">
+				     				<th style="width: 200px;">项目名称</th>
+				     				<th>接口url</th>
+				     				<th style="width: 100px;">请求类型</th>
 				     				<th style="width: 200px;">管理</th>
-				     				</shiro:hasPermission>
 				     			</tr>
 				     		</thead>
-				     		<tbody id="J_pageInfoTbody">
+				     		<tbody id="J_testCaseTbody">
 				     		</tbody>
-							<script type="text/x-jquery-tmpl" id="J_pageInfoTmpl">
-								<tr data-id="${'${'}id}">
-				     				<td>${'${'}pageNo}</td>
-				     				<td>${'${'}name}</td>
-				     				<td>${'${'}createTime? new Date(createTime).format('yyyy-MM-dd hh:mm:ss'): '--'}</td>
-				     				<td>${'${'}updateTime? new Date(updateTime).format('yyyy-MM-dd hh:mm:ss'): '--'}</td>
-									<shiro:hasPermission name="page_info:modify">
+							<script type="text/x-jquery-tmpl" id="J_testCaseTmpl">
+								<tr data-id="${'${'}id}" data-path="${'${'}path}" 
+										title="${'${'}description}">
+				     				<td>${'${'}projectName}</td>
+				     				<td class="text-left padding-left-20">${'${'}url}</td>
+									<td>${'${'}method}</td>
 				     				<td>
 				     					<button class="btn btn-primary btn-xs open-update-modal">修改</button>
-										<shiro:hasPermission name="tag_info:modify">
-				     					<button class="btn btn-primary btn-xs open-create-tag-modal">操作项</button>
-										</shiro:hasPermission>
+				     					<button class="btn btn-primary btn-xs delete-testcase">删除</button>
+										<button class="btn btn-primary btn-xs open-case-info-modal">参数</button>
+										<button class="btn btn-primary btn-xs">测试</button>
 				     				</td>
-									</shiro:hasPermission>
 				     			</tr>
 							</script>
 				     	</table>
@@ -97,120 +89,56 @@
 	</div><!-- /row1 -->
 </div>
 
-<!-- 新增/修改pageInfo的弹出层 -->
-<div class="modal" id="J_pageInfoModal" tabindex="-1">
+<!-- 修改testCase的弹出层 -->
+<div class="modal" id="J_testCaseModal" tabindex="-1">
     <div class="modal-dialog">
     	<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+				</button>
 				<h4 class="modal-title"><strong>标题</strong></h4>
 			</div>
 			<div class="modal-body">
 					<form class="form-horizontal" role="form">
-						<input type="hidden" id="P_id" name="id" />
+						<input type="hidden" id="TC_id" name="id" />
 						<div class="form-group">
-							<label for="P_pageNo" class="col-sm-4 control-label">页面编号：</label>
+							<label for="TC_path" class="col-sm-4 control-label">接口路径：</label>
 							<div class="col-sm-8">
-								<input type="text" class="form-control" id="P_pageNo" name="pageNo" placeholder="请输入页面编号" />
+								<input type="text" class="form-control" id="TC_path" name="path" placeholder="请输入接口路径" />
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="P_name" class="col-sm-4 control-label">页面名称：</label>
+							<label for="TC_method" class="col-sm-4 control-label">请求类型：</label>
 							<div class="col-sm-8">
-								<input type="text" class="form-control" id="P_name" name="name" placeholder="请输入页面名称" />
+								<select id="TC_method" name="method" class="form-control">
+									<option>GET</option>
+									<option>POST</option>
+									<option>HEAD</option>
+									<option>PUT</option>
+									<option>DELETE</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="TC_description" class="col-sm-4 control-label">描述：</label>
+							<div class="col-sm-8">
+								<input type="text" class="form-control" id="TC_description" name="description" placeholder="请输入描述" />
 							</div>
 						</div>
 					</form>
 				</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary create-page-info" id="J_createPageInfoBtn" >创建</button>
-				<button type="button" class="btn btn-primary update-page-info" id="J_updatePageInfoBtn" >更新</button>
+				<button type="button" class="btn btn-primary update-testcase">更新</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
-<!-- 新增tagInfo的弹出层 -->
-<div class="modal" id="J_tagInfoModal" tabindex="-1">
-    <div class="modal-dialog">
-    	<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<h4 class="modal-title"><strong>标题</strong></h4>
-			</div>
-			<div class="modal-body">
-					<form class="form-horizontal" role="form">
-						<input type="hidden" id="T_id" name="id" />
-						<input type="hidden" id="T_pageInfoId" name="pageInfoId" />
-						<div class="form-group">
-							<label for="T_pageNo" class="col-sm-4 control-label">页面编号：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" id="T_pageNo" name="pageNo" placeholder="请输入页面编号" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="T_pageName" class="col-sm-4 control-label">页面名称：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" id="T_pageName" name="pageName" placeholder="请输入页面名称" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="T_tagNo" class="col-sm-4 control-label">操作编号：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" id="T_tagNo" name="tagNo" placeholder="请输入操作编号" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="T_name" class="col-sm-4 control-label">操作名称：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" id="T_name" name="name" placeholder="请输入操作名称" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="T_actionId" class="col-sm-4 control-label">操作动作：</label>
-							<div class="col-sm-8">
-								<select id="T_actionId" name="actionId" class="form-control">
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="T_targetId" class="col-sm-4 control-label">操作目标：</label>
-							<div class="col-sm-8">
-								<select id="T_targetId" name="targetId" class="form-control">
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="T_originVersion" class="col-sm-4 control-label">初始版本：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" id="T_originVersion" name="originVersion" placeholder="请输入初始版本" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="T_comment" class="col-sm-4 control-label">备注：</label>
-							<div class="col-sm-8">
-								<textarea id="T_comment" name="comment" class="form-control" rows="5" placeholder="请输入备注，100字以内"></textarea>
-							</div>
-						</div>
-					</form>
-				</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-primary create-tag-info" id="J_createTagInfoBtn" >创建</button>
-				<button type="button" class="btn btn-primary update-tag-info" id="J_updateTagInfoBtn" >更新</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-			</div>
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="hide">
-	<iframe name="exportFrame"></iframe>
-</div>
 
 <%@ include file="../include/includeJs.jsp" %>
 <script>
-seajs.use('app/pageInfo/list', function(list) {
+seajs.use('app/testcase/list', function(list) {
 	list.init();
 });
 </script>

@@ -19,7 +19,7 @@ import net.yangziwen.httptest.service.ProjectService;
 
 @Controller
 @RequestMapping("/project")
-public class ProjectControlelr extends BaseController {
+public class ProjectController extends BaseController {
 	
 	@Autowired
 	private ProjectService projectService;
