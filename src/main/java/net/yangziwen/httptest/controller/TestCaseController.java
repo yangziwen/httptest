@@ -62,6 +62,27 @@ public class TestCaseController extends BaseController {
 	}
 	
 	@ResponseBody
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public ModelMap create(
+			@RequestParam long projectId,
+			@RequestParam String path,
+			@RequestParam TestCase.Method method,
+			@RequestParam String description
+			) {
+		if(projectId <= 0 || StringUtils.isBlank(path) || method == null) {
+			throw HttpTestException.invalidParameterException("Parameters are invalid!");
+		}
+		try {
+			TestCase testCase = new TestCase(projectId, path, method, description);
+			testCaseService.createTestCase(testCase);
+			return successResult("TestCase[%d] is created!", testCase.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw HttpTestException.operationFailedException("Failed to create testCase!");
+		}
+	}
+	
+	@ResponseBody
 	@RequestMapping(value = "/update/{id:\\d+}", method = RequestMethod.POST)
 	public ModelMap update(
 			@PathVariable("id") long id,
@@ -81,10 +102,27 @@ public class TestCaseController extends BaseController {
 			testCase.setMethod(method);
 			testCase.setDescription(description);
 			testCaseService.updateTestCase(testCase);
-			return successResult("TestCase[%d] is updated successfully!", testCase.getId());
+			return successResult("TestCase[%d] is updated!", testCase.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw HttpTestException.operationFailedException("Failed to update testCase[%d]", id);
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/delete/{id:\\d+}", method = RequestMethod.POST)
+	public ModelMap delete(
+			@PathVariable("id") long id
+			) {
+		if(id <= 0) {
+			throw HttpTestException.invalidParameterException("Parameter is invalid!");
+		}
+		try {
+			testCaseService.deleteTestCase(id);
+			return successResult("TestCase[%d] is deleted!", id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw HttpTestException.operationFailedException("Failed to delete testCase[%d]", id);
 		}
 	}
 	
@@ -120,7 +158,7 @@ public class TestCaseController extends BaseController {
 		List<CaseParam> caseParamList = JSON.parseArray(caseParamListJson, CaseParam.class);
 		try {
 			testCaseService.renewCaseParams(caseId, caseParamList);
-			return successResult("CaseParams of testCase[%d] are renewed successfully!", caseId);
+			return successResult("CaseParams of testCase[%d] are renewed!", caseId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw HttpTestException.operationFailedException("Failed to renew caseParams for testCase[%d]", caseId);

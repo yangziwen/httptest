@@ -4,9 +4,13 @@ define(function(require, exports, module) {
 
 	require('jquery.tmpl');
 	require('bootstrap.pagebar');
+	
 	var $ = require('jquery'),
 		common = require('app/common');
+	
 	var projectValidator = require('app/project/validator').validate($('#J_projectModal form'));
+	
+	var testCaseValidator = require('app/testcase/validator').validate($('#J_testCaseModal form'));
 	
 	$('#J_projectModal').on('hide.bs.modal', function() {
 		$('#J_projectModal form').cleanValidateStyle();
@@ -204,6 +208,76 @@ define(function(require, exports, module) {
 	}
 	/** 删除project结束 **/
 	
+	/** 新增testCase开始 **/
+	function initOpenCreateTestCaseModalBtn() {
+		$('#J_projectTbody').on('click', 'button.open-create-testcase-modal', function() {
+			var $tr = $(this).parents('tr').eq(0),
+				$tds = $tr.children();
+			var projectId = $tr.data('id'),
+				projectName = $tds.eq(0).html(),
+				baseUrl = $tds.eq(1).html();
+			var $modal = $('#J_testCaseModal');
+			common.clearForm($modal.find('form'));
+			$modal.find('.modal-title > strong').html('新增用例信息');
+			$modal.find('input[name=id]').val('');
+			$modal.find('input[name=projectId]').val(projectId);
+			$modal.find('input[name=projectName]').val(projectName)
+				.attr({disabled: true, title: projectName});
+			$modal.find('input[name=baseUrl]').val(baseUrl)
+				.attr({disabled: true, title: baseUrl});
+			$modal.find('select[name=method]').val('GET');
+			$modal.find('.modal-dialog').css({
+				width: 500,
+				'margin-top': function() {
+					return ( $(window).height() - 400 ) / 2;
+				}
+			});
+			$modal.find('button.create-testcase').show();
+			$modal.find('button.update-testcase').hide();
+			$modal.modal({
+				backdrop: 'static'
+			});
+		});
+	}
+	
+	function initCreateTestCaseBtn() {
+		$('#J_testCaseModal').on('click', 'button.create-testcase', function() {
+			if(!testCaseValidator.form()) {
+				return;
+			}
+			var params = {
+				projectId: $('#TC_projectId').val(),
+				path: $('#TC_path').val(),
+				description: $('#TC_description').val(),
+				method: $('#TC_method').val()
+			}
+			doCreateTestCase(params);
+		});
+	}
+	
+	function doCreateTestCase(params) {
+		$.ajax({
+			url: CTX_PATH + '/testcase/create',
+			type: 'POST',
+			dataType: 'json',
+			data: params,
+			success: function(data) {
+				if(data.code !== 0) {
+					common.alertMsg('创建失败!');
+					return;
+				} else {
+					common.alertMsg('创建成功!').done(function() {
+						$('#J_testCaseModal').modal('hide');
+					});
+				}
+			}, 
+			error: function() {
+				common.alertMsg('请求失败!');
+			}
+		});
+	}
+	/** 新增testCase结束 **/
+	
 	function initQueryBtn() {
 		var $queryBtn = $('#J_queryBtn');
 		$('#J_queryArea').on('keyup', 'input[type!=button][type!=submit][type!=reset]', function(ev) {
@@ -233,9 +307,15 @@ define(function(require, exports, module) {
 		initDeleteProjectBtn();
 	}
 	
+	function initTestCaseOperations() {
+		initOpenCreateTestCaseModalBtn();
+		initCreateTestCaseBtn();
+	}
+	
 	function init() {
 		refreshProjectTbl();
 		initProjectOperations();
+		initTestCaseOperations();
 		initQueryBtn();
 		initClearBtn();
 	}

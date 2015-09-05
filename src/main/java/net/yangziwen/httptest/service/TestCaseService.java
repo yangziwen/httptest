@@ -33,6 +33,10 @@ public class TestCaseService {
 		return testCaseDao.paginate(offset, limit, params);
 	}
 	
+	public void createTestCase(TestCase testCase) {
+		testCaseDao.save(testCase);
+	}
+	
 	public void updateTestCase(TestCase testCase) {
 		testCaseDao.update(testCase);
 	}
@@ -41,9 +45,14 @@ public class TestCaseService {
 		return caseParamDao.list(params); 
 	}
 	
+	public void deleteTestCase(long caseId) {
+		testCaseDao.deleteById(caseId);
+		caseParamDao.deleteByCaseIds(caseId);
+	}
+	
 	public void renewCaseParams(long caseId, List<CaseParam> caseParamList) {
 		if(CollectionUtils.isEmpty(caseParamList)) {
-			caseParamDao.deleteByCaseId(caseId);
+			caseParamDao.deleteByCaseIds(caseId);
 			return;
 		}
 		for(CaseParam cp: caseParamList) {

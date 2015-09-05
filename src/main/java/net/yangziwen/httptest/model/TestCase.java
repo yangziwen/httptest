@@ -28,6 +28,13 @@ public class TestCase extends AbstractModel {
 	private String description;
 	
 	public TestCase() {}
+	
+	public TestCase(long projectId, String path, Method method, String description) {
+		this.projectId = projectId;
+		this.path = path;
+		this.method = method;
+		this.description = description;
+	}
 
 	public long getId() {
 		return id;

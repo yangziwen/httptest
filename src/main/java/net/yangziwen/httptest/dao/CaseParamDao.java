@@ -1,8 +1,11 @@
 package net.yangziwen.httptest.dao;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import net.yangziwen.httptest.dao.base.AbstractEditPropertyJdbcDaoImpl;
@@ -23,9 +26,19 @@ public class CaseParamDao extends AbstractEditPropertyJdbcDaoImpl<CaseParam> {
 		return propertyEditorMap;
 	}
 	
-	public int deleteByCaseId(long caseId) {
-		String sql = "delete from " + getTableName() + "where case_id = :caseId";
-		Map<String, Object> params = new QueryParamMap().addParam("caseId", caseId);
+	public int deleteByCaseIds(Long... caseIds) {
+		if(caseIds == null) {
+			return 0;
+		}
+		return deleteByCaseIds(Arrays.asList(caseIds));
+	}
+	
+	public int deleteByCaseIds(List<Long> caseIdList) {
+		if(CollectionUtils.isEmpty(caseIdList)) {
+			return 0;
+		}
+		String sql = "delete from " + getTableName() + " where case_id in (:caseIdList)";
+		Map<String, Object> params = new QueryParamMap().addParam("caseIdList", caseIdList);
 		return jdbcTemplate.update(sql, params);
 	}
 

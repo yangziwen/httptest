@@ -52,7 +52,7 @@ public class ProjectController extends BaseController {
 		try {
 			Project project = new Project(name, baseUrl);
 			projectService.createProject(project);
-			return successResult("Project[%d] is created successfully!", project.getId());
+			return successResult("Project[%d] is created!", project.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw HttpTestException.operationFailedException("Failed to create Project[%s, %s]", name, baseUrl);
@@ -77,7 +77,7 @@ public class ProjectController extends BaseController {
 			project.setName(name);
 			project.setBaseUrl(baseUrl);
 			projectService.updateProject(project);
-			return successResult("Project[%d] is updated successfully!", project.getId());
+			return successResult("Project[%d] is updated!", project.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw HttpTestException.operationFailedException("Failed to update project[%d]!", id);
@@ -92,7 +92,7 @@ public class ProjectController extends BaseController {
 		}
 		try {
 			projectService.deleteProject(id);
-			return successResult("Project[%d] is deleted successfully!", id);
+			return successResult("Project[%d] is deleted!", id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw HttpTestException.operationFailedException("Failed to delete project[%d]!", id);

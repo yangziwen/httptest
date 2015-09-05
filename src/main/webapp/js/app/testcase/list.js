@@ -49,6 +49,8 @@ define(function(require, exports, module) {
 			var $this = $(this);
 			var $tr = $this.parents('tr').eq(0),
 				$tds = $tr.children();
+			var projectName = $tr.data('project-name'),
+				baseUrl = $tr.data('baseurl');
 			var id = $tr.data('id'),
 				path = $tr.data('path'),
 				method = $tds.eq(2).html(),
@@ -59,10 +61,14 @@ define(function(require, exports, module) {
 			$modal.find('input[name=path]').val(path);
 			$modal.find('select[name=method]').val(method);
 			$modal.find('input[name=description]').val(description);
+			$modal.find('input[name=projectName]').val(projectName)
+				.attr({disabled: true, title: projectName});
+			$modal.find('input[name=baseUrl]').val(baseUrl)
+				.attr({disabled: true, title: baseUrl});
 			$modal.find('.modal-dialog').css({
 				width: 500,
 				'margin-top': function() {
-					return ( $(window).height() - $(this).height() ) / 3;
+					return ( $(window).height() - 400 ) / 2;
 				}
 			});
 			$modal.find('button.create-testcase').hide();
@@ -180,10 +186,18 @@ define(function(require, exports, module) {
 			var $modal = $('#J_caseParamModal');
 			common.clearForm($modal.find('form'));
 			$modal.find('input[name=caseId]').val(caseId);
-			$modal.find('input[name=projectName]').val(projectName);
-			$modal.find('input[name=baseUrl]').val(baseUrl);
-			$modal.find('input[name=description]').val(description);
-			$modal.find('input[name=path]').val(path);
+			$modal.find('input[name=projectName]')
+				.val(projectName)
+				.attr({disabled: true, title: projectName});
+			$modal.find('input[name=baseUrl]')
+				.val(baseUrl)
+				.attr({disabled: true, title: baseUrl});
+			$modal.find('input[name=description]')
+				.val(description)
+				.attr({disabled: true, title: description});
+			$modal.find('input[name=path]')
+				.val(path)
+				.attr({disabled: true, title: path});
 			
 			var url = CTX_PATH + '/testcase/params';
 			$.get(url, {caseId: caseId}, function(data) {
