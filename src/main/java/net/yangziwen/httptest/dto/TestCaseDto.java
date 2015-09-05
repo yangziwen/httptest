@@ -42,9 +42,12 @@ public class TestCaseDto {
 		return testCase.getPath();
 	}
 	
+	public String getBaseUrl() {
+		return project != null? project.getBaseUrl(): "";
+	}
+	
 	public String getUrl() {
-		String baseUrl = project != null? project.getBaseUrl(): "";
-		return baseUrl + testCase.getPath();
+		return getBaseUrl() + testCase.getPath();
 	}
 
 	public Method getMethod() {
