@@ -8,6 +8,7 @@ import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import net.yangziwen.httptest.dao.CaseParamDao;
 import net.yangziwen.httptest.dao.TestCaseDao;
@@ -45,11 +46,13 @@ public class TestCaseService {
 		return caseParamDao.list(params); 
 	}
 	
+	@Transactional
 	public void deleteTestCase(long caseId) {
 		testCaseDao.deleteById(caseId);
 		caseParamDao.deleteByCaseIds(caseId);
 	}
 	
+	@Transactional
 	public void renewCaseParams(long caseId, List<CaseParam> caseParamList) {
 		if(CollectionUtils.isEmpty(caseParamList)) {
 			caseParamDao.deleteByCaseIds(caseId);

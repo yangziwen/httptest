@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -49,6 +50,7 @@ public class ProjectService {
 		projectDao.update(project);
 	}
 	
+	@Transactional
 	public void deleteProject(long id) {
 		List<TestCase> testCaseList = testCaseDao.list(new QueryParamMap().addParam("projectId", id));
 		List<Long> caseIdList = Lists.transform(testCaseList, new Function<TestCase, Long>() {
