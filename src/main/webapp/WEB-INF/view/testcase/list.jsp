@@ -69,7 +69,7 @@
 				     		</tbody>
 							<script type="text/x-jquery-tmpl" id="J_testCaseTmpl">
 								<tr data-id="${'${'}id}" data-path="${'${'}path}" 
-										title="${'${'}description}">
+										title="${'${'} '[' + projectName + '] ' + description}">
 				     				<td>${'${'}projectName}</td>
 				     				<td class="text-left padding-left-20">${'${'}url}</td>
 									<td>${'${'}method}</td>

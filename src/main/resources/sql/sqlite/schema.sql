@@ -24,8 +24,8 @@ CREATE TABLE "test_case" (
 	rank integer DEFAULT 0
 );
 
-DROP TABLE IF EXISTS "case_info";
-CREATE TABLE "case_info" (
+DROP TABLE IF EXISTS "case_param";
+CREATE TABLE "case_param" (
 	"id" integer PRIMARY KEY AUTOINCREMENT,
 	"case_id" integer NOT NULL,
 	"type" integer DEFAULT 0,

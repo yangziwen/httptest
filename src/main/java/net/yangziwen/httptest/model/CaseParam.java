@@ -9,7 +9,7 @@ import net.yangziwen.httptest.model.base.AbstractModel;
 import net.yangziwen.httptest.util.EnumUtil.EnumConverter;
 
 @Table
-public class CaseInfo extends AbstractModel {
+public class CaseParam extends AbstractModel {
 	
 	@Id
 	@Column
@@ -27,7 +27,7 @@ public class CaseInfo extends AbstractModel {
 	@Column
 	private String value;
 	
-	public CaseInfo() {}
+	public CaseParam() {}
 	
 	public long getId() {
 		return id;
