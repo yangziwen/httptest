@@ -1,19 +1,25 @@
 package net.yangziwen.httptest.controller;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,6 +40,7 @@ import net.yangziwen.httptest.dao.base.QueryParamMap;
 import net.yangziwen.httptest.dto.TestCaseDto;
 import net.yangziwen.httptest.exception.HttpTestException;
 import net.yangziwen.httptest.model.CaseParam;
+import net.yangziwen.httptest.model.CaseParam.Type;
 import net.yangziwen.httptest.model.Project;
 import net.yangziwen.httptest.model.TestCase;
 import net.yangziwen.httptest.service.ProjectService;
@@ -199,8 +206,15 @@ public class TestCaseController extends BaseController {
 		TestCaseDto dto = TestCaseDto.from(testCase, project);
 		
 		CloseableHttpClient client = HttpClients.createDefault();
-		HttpClientContext context = getHttpContext(project.getId(), session);
 		HttpUriRequest request = testCase.getMethod().createRequest(dto.getUrl(), caseParamList);
+		HttpClientContext context = getHttpContext(project.getId(), session);
+		String host = null; 
+		try {
+			host = new URL(dto.getUrl()).getHost();
+		} catch (Exception e) {
+			throw HttpTestException.illegalUrlException("Invalid url[%s]", dto.getUrl());
+		}
+		addCookies(host, caseParamList, context);
 		
 		try {
 			return client.execute(request, new ResponseHandler<ResponseResult>() {
@@ -214,6 +228,38 @@ public class TestCaseController extends BaseController {
 		} finally {
 			IOUtils.close(client);
 		}
+	}
+	
+	/**
+	 * 此处有些简陋，后续可以考虑进一步加强cookie的机制
+	 */
+	private void addCookies(String host, List<CaseParam> caseParamList, HttpClientContext context) {
+		CookieStore cookieStore = getCookieStore(context);
+		Date now = new Date();
+		cookieStore.clearExpired(now);
+		for(CaseParam param: caseParamList) {
+			if(param.getType() == Type.COOKIE) {
+				BasicClientCookie cookie = new BasicClientCookie(param.getName(), param.getValue());
+				cookie.setDomain(host);
+				cookie.setPath("/");
+				cookie.setExpiryDate(DateUtils.addSeconds(now, 2));	// 自定义参数2秒后过期
+				cookieStore.addCookie(cookie);
+			}
+		}
+	}
+	
+	private CookieStore getCookieStore(HttpClientContext context) {
+		CookieStore cookieStore = context.getCookieStore();
+		if(cookieStore != null) {
+			return cookieStore;
+		}
+		synchronized (context) {
+			if((cookieStore = context.getCookieStore()) == null) {
+				cookieStore = new BasicCookieStore();
+				context.setCookieStore(cookieStore);
+			}
+		}
+		return cookieStore;
 	}
 	
 	private HttpClientContext getHttpContext(long projectId, HttpSession session) {

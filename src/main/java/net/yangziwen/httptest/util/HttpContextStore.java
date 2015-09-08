@@ -3,7 +3,6 @@ package net.yangziwen.httptest.util;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.protocol.BasicHttpContext;
 
 public class HttpContextStore {
 	
@@ -15,7 +14,7 @@ public class HttpContextStore {
 		HttpClientContext context = store.get(projectId);
 		HttpClientContext prevContext = null;
 		if(context == null) {
-			context = HttpClientContext.adapt(new BasicHttpContext());
+			context = HttpClientContext.create();
 			prevContext = store.putIfAbsent(projectId, context);
 		}
 		return prevContext != null? prevContext: context;
