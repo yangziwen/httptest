@@ -13,7 +13,11 @@ define(function(require, exports, module) {
 	var testCaseValidator = require('app/testcase/validator').validate($('#J_testCaseModal form'));
 	
 	$('#J_projectModal').on('hide.bs.modal', function() {
-		$('#J_projectModal form').cleanValidateStyle();
+		$(this).find('form').cleanValidateStyle();
+	});
+	
+	$('#J_testCaseModal').on('hide.bs.modal', function() {
+		$(this).find('form').cleanValidateStyle();
 	});
 	
 	var offset = 0, limit = 30;	// 翻页信息

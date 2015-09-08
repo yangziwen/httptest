@@ -1,5 +1,6 @@
 package net.yangziwen.httptest.model;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -111,7 +113,9 @@ public class TestCase extends AbstractModel {
 				}
 				return get;
 			}
-		}, POST {
+		}, 
+		
+		POST {
 			@Override
 			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
 				HttpPost post = new HttpPost(url);
@@ -127,10 +131,17 @@ public class TestCase extends AbstractModel {
 		        		default:;
 		        	}
 		        }
-				return new HttpPost(url);
+		        try {
+					post.setEntity(new UrlEncodedFormEntity(params));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				return post;
 			}
 		};
+		
 		public abstract HttpUriRequest createRequest(String url, List<CaseParam> paramList);
+		
 	}
 	
 	
