@@ -37,9 +37,6 @@
 								<select id="TC_method" name="method" class="form-control">
 									<option>GET</option>
 									<option>POST</option>
-									<option>HEAD</option>
-									<option>PUT</option>
-									<option>DELETE</option>
 								</select>
 							</div>
 						</div>

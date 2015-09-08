@@ -68,10 +68,10 @@
 				     	<table class="table table-bordered table-striped table-condensed table-hover ">
 				     		<thead>
 				     			<tr>
-				     				<th style="width: 200px;">项目名称</th>
+				     				<th style="width: 250px;">项目名称</th>
 				     				<th>接口url</th>
-				     				<th style="width: 100px;">请求类型</th>
-				     				<th style="width: 200px;">管理</th>
+				     				<th style="width: 80px;">请求类型</th>
+				     				<th style="width: 100px;">管理</th>
 				     			</tr>
 				     		</thead>
 				     		<tbody id="J_testCaseTbody">
@@ -81,9 +81,9 @@
 										data-baseurl="${'${'}baseUrl}" data-project-name="${'${'}projectName}"
 										data-description="${'${'}description}"
 										title="${'${'} '[' + projectName + '] ' + description}">
-				     				<td>${'${'}projectName}</td>
-				     				<td class="text-left padding-left-20">${'${'}url}</td>
-									<td>${'${'}method}</td>
+				     				<td>[ ${'${'}projectName} ] <br/> ${'${'}description} </td>
+				     				<td style="line-height:50px;" class="text-left padding-left-20">${'${'}url}</td>
+									<td style="line-height:50px;">${'${'}method}</td>
 				     				<td>
 				     					<button class="btn btn-primary btn-xs open-update-modal">修改</button>
 				     					<button class="btn btn-primary btn-xs delete-testcase">删除</button>

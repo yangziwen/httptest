@@ -77,6 +77,7 @@ public class TestCaseController extends BaseController {
 		Page<TestCase> page = testCaseService.getTestCasePageResult(offset, limit, new QueryParamMap()
 			.addParam(projectIdList != null, "projectId__in", projectIdList)
 			.addParam(StringUtils.isNotBlank(pathKeyword), "path__contain", pathKeyword)
+			.orderByAsc("path")
 		);
 		return successResult(TestCaseDto.from(page));
 	}
