@@ -44,6 +44,10 @@ public class HttpTestException extends RuntimeException {
 		return new UnauthorizedException(errorMsg, args);
 	}
 	
+	public static IllegalUrlException illegalUrlException (String errorMsg, Object... args) {
+		return new IllegalUrlException(errorMsg, args);
+	}
+	
 	// ----------------------------------- //
 	
 	static class NotExistException extends HttpTestException {
@@ -68,5 +72,12 @@ public class HttpTestException extends RuntimeException {
 		protected UnauthorizedException(String errorMsg, Object... args) {
 			super(10004, errorMsg, args);
 		}
+	}
+	
+	static class IllegalUrlException extends HttpTestException {
+		protected IllegalUrlException(String errorMsg, Object... args) {
+			super(20001, errorMsg, args);
+		}
+		
 	}
 }

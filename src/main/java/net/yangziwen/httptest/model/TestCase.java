@@ -1,10 +1,22 @@
 package net.yangziwen.httptest.model;
 
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
+
 import net.yangziwen.httptest.dao.base.EnumPropertyEditor;
+import net.yangziwen.httptest.exception.HttpTestException;
 import net.yangziwen.httptest.model.base.AbstractModel;
 import net.yangziwen.httptest.util.EnumUtil.EnumConverter;
 
@@ -77,8 +89,50 @@ public class TestCase extends AbstractModel {
 	}
 
 	public enum Method {
-		GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE, TRACE;
+		GET {
+			@Override
+			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
+				HttpGet get = null;
+				try {
+					URIBuilder builder = new URIBuilder(url);
+					for(CaseParam param: paramList) {
+						if(param.getType() == CaseParam.Type.PARAM) {
+							builder.setParameter(param.getName(), param.getValue());
+						}
+					}
+					get = new HttpGet(builder.build());
+				} catch (URISyntaxException e) {
+					throw HttpTestException.illegalUrlException("Url is invalid [%s]", url);
+				}
+				for(CaseParam param: paramList) {
+					if(param.getType() == CaseParam.Type.HEADER) {
+						get.addHeader(param.getName(), param.getValue());
+					}
+				}
+				return get;
+			}
+		}, POST {
+			@Override
+			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
+				HttpPost post = new HttpPost(url);
+				List<NameValuePair> params = new ArrayList<NameValuePair>();
+		        for (CaseParam param: paramList) {
+		        	switch(param.getType()) {
+		        		case PARAM:
+		        			params.add(new BasicNameValuePair(param.getName(), param.getValue()));
+		        			break;
+		        		case HEADER:
+		        			post.addHeader(param.getName(), param.getValue());
+		        			break;
+		        		default:;
+		        	}
+		        }
+				return new HttpPost(url);
+			}
+		};
+		public abstract HttpUriRequest createRequest(String url, List<CaseParam> paramList);
 	}
+	
 	
 	public static class MethodPropertyEditor extends EnumPropertyEditor<Method> {
 

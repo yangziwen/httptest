@@ -88,7 +88,7 @@
 				     					<button class="btn btn-primary btn-xs open-update-modal">修改</button>
 				     					<button class="btn btn-primary btn-xs delete-testcase">删除</button>
 										<button class="btn btn-primary btn-xs open-case-param-modal">参数</button>
-										<button class="btn btn-primary btn-xs">测试</button>
+										<button class="btn btn-primary btn-xs execute-testcase">测试</button>
 				     				</td>
 				     			</tr>
 							</script>

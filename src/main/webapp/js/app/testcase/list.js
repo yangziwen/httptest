@@ -273,6 +273,22 @@ define(function(require, exports, module) {
 	}
 	/** 更新caseParam结束 **/
 	
+	function initExecuteTestCaseBtn() {
+		$('#J_testCaseTbody').on('click', 'button.execute-testcase', function() {
+			var $tr = $(this).parents('tr').eq(0);
+			$.get(CTX_PATH + '/testcase/test', {
+				caseId: $tr.data('id')
+			}, function(data) {	// TODO 待续
+				console.dir(data.result);
+				if(data.code === 0) {
+					common.alertMsg('success');
+				} else {
+					common.alertMsg("failed");
+				}
+			});
+		});
+	}
+	
 	function initQueryBtn() {
 		var $queryBtn = $('#J_queryBtn');
 		$('#J_queryArea').on('keyup', 'input[type!=button][type!=submit][type!=reset]', function(ev) {
@@ -298,6 +314,7 @@ define(function(require, exports, module) {
 		initOpenUpdateModalBtn();
 		initUpdateTestCaseBtn();
 		initDeleteTestCaseBtn();
+		initExecuteTestCaseBtn();
 	}
 	
 	function initCaseParamOperations() {

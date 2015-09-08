@@ -98,6 +98,13 @@
 			<version>7.0.64</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<!-- httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5</version>
+		</dependency>
 		
 		<!-- guava -->
 		<dependency>

@@ -1,9 +1,19 @@
 package net.yangziwen.httptest.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.util.IOUtils;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
@@ -27,6 +38,8 @@ import net.yangziwen.httptest.model.Project;
 import net.yangziwen.httptest.model.TestCase;
 import net.yangziwen.httptest.service.ProjectService;
 import net.yangziwen.httptest.service.TestCaseService;
+import net.yangziwen.httptest.util.HttpContextStore;
+import net.yangziwen.httptest.util.ResponseResult;
 
 @Controller
 @RequestMapping("/testcase")
@@ -163,6 +176,49 @@ public class TestCaseController extends BaseController {
 			e.printStackTrace();
 			throw HttpTestException.operationFailedException("Failed to renew caseParams for testCase[%d]", caseId);
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping("/test")
+	public ModelMap test(@RequestParam long caseId, HttpSession session) {
+		if(caseId <= 0) {
+			throw HttpTestException.invalidParameterException("Parameter is invalid!");
+		}
+		TestCase testCase = testCaseService.getTestCaseById(caseId);
+		if(testCase == null) {
+			throw HttpTestException.notExistException("TestCase[%d] does not exist!", caseId);
+		}
+		return successResult(doTest(testCase, session));
+	}
+	
+	private ResponseResult doTest(TestCase testCase, HttpSession session) {
+		List<CaseParam> caseParamList = testCaseService.getCaseParamListResult(new QueryParamMap()
+				.addParam("caseId", testCase.getId()));
+		Project project = projectService.getProjectById(testCase.getProjectId());
+		
+		TestCaseDto dto = TestCaseDto.from(testCase, project);
+		
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpClientContext context = getHttpContext(project.getId(), session);
+		HttpUriRequest request = testCase.getMethod().createRequest(dto.getUrl(), caseParamList);
+		
+		try {
+			return client.execute(request, new ResponseHandler<ResponseResult>() {
+				@Override
+				public ResponseResult handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+					return new ResponseResult(response);
+				}
+			}, context);
+		} catch (Exception e) {
+			throw HttpTestException.operationFailedException("Failed to test testCase[%d]", testCase.getId());
+		} finally {
+			IOUtils.close(client);
+		}
+	}
+	
+	private HttpClientContext getHttpContext(long projectId, HttpSession session) {
+		HttpContextStore store = (HttpContextStore) session.getAttribute(HttpContextStore.CONTEXT_STORE);
+		return store.getContext(projectId);
 	}
 	
 }
