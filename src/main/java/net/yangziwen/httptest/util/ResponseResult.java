@@ -15,6 +15,8 @@ public class ResponseResult {
 	
 	public static final ContentType DEFAULT_CONTENT_TYPE = ContentType.parse("text/plain; charset=utf8");
 
+	private String statusLine;
+	
 	private List<Header> headers;
 	
 	private ContentType contentType;
@@ -22,6 +24,7 @@ public class ResponseResult {
 	private String content;
 	
 	public ResponseResult(HttpResponse response) {
+		statusLine = response.getStatusLine().toString();
 		Header header = response.getFirstHeader(CONTENT_TYPE);
 		if(header != null) {
 			contentType = ContentType.parse(header.getValue());
@@ -37,6 +40,14 @@ public class ResponseResult {
 			} catch (Exception e) {
 			}
 		}
+	}
+
+	public String getStatusLine() {
+		return statusLine;
+	}
+
+	public void setStatusLine(String statusLine) {
+		this.statusLine = statusLine;
 	}
 
 	public List<Header> getHeaders() {

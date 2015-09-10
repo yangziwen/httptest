@@ -275,7 +275,12 @@ define(function(require, exports, module) {
 	
 	/** 用例测试开始 **/
 	function initExecuteTestCaseBtn() {
+		var $modal = $('#J_testResultModal');
+		var $resultNav = $modal.find('.test-result-nav'),
+			$headersNav = $modal.find('.test-headers-nav');
+		
 		$('#J_testCaseTbody').on('click', 'button.execute-testcase', function() {
+			$resultNav.trigger('click');
 			var $tr = $(this).parents('tr').eq(0);
 			$.get(CTX_PATH + '/testcase/test', {
 				caseId: $tr.data('id')
@@ -295,12 +300,12 @@ define(function(require, exports, module) {
 			$headersNav = $modal.find('.test-headers-nav');
 		$resultNav.on('click', function() {
 			$(this).addClass('active').siblings().removeClass('active');
-			$modal.find('.result-json').show();
+			$modal.find('.result-content').show();
 			$modal.find('.result-headers').hide();
 		});
 		$headersNav.on('click', function() {
 			$(this).addClass('active').siblings().removeClass('active');
-			$modal.find('.result-json').hide();
+			$modal.find('.result-content').hide();
 			$modal.find('.result-headers').show();
 		});
 	}
@@ -312,11 +317,20 @@ define(function(require, exports, module) {
 	
 	function showTestResult(result) {
 		var $modal = $('#J_testResultModal');
+		var $title = $modal.find('.modal-title');
+		$title.html('<strong>测试结果 [' + result.statusLine + ']</strong>');
 		var $resultHeadersTbody = $modal.find('.result-headers tbody');
-		$('#J_resultJson').empty();
+		var $resultJson = $('#J_resultJson').empty();
+		var $resultHtml = $('#J_resultHtml').empty();
 		$resultHeadersTbody.empty().append($('#J_testResultHeadersTmpl').tmpl(result.headers));
 		if(result.contentType.mimeType == 'application/json') {
 			inspector.view($.parseJSON(result.content));
+			$resultJson.show().siblings().hide();
+		} else if(result.contentType.mimeType.indexOf('text/') == 0) {
+			$resultHtml.append('<pre class="brush: html"></pre>');
+			var $pre = $resultHtml.find('pre').text(result.content.trim());
+			SyntaxHighlighter.highlight($pre[0]);
+			$resultHtml.show().siblings().hide();
 		}
 		$modal.modal({backdrop: 'static'});
 	}
