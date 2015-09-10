@@ -104,6 +104,8 @@
 
 <%@ include file="./caseParamModal.jsp" %>
 
+<%@ include file="./testResultModal.jsp" %>
+
 <%@ include file="../include/includeJs.jsp" %>
 <script>
 seajs.use('app/testcase/list', function(list) {

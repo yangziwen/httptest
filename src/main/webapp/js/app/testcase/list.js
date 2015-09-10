@@ -273,21 +273,54 @@ define(function(require, exports, module) {
 	}
 	/** 更新caseParam结束 **/
 	
+	/** 用例测试开始 **/
 	function initExecuteTestCaseBtn() {
 		$('#J_testCaseTbody').on('click', 'button.execute-testcase', function() {
 			var $tr = $(this).parents('tr').eq(0);
 			$.get(CTX_PATH + '/testcase/test', {
 				caseId: $tr.data('id')
 			}, function(data) {	// TODO 待续
-				console.dir(data.result);
 				if(data.code === 0) {
-					common.alertMsg('success');
+					showTestResult(data.result);
 				} else {
 					common.alertMsg("failed");
 				}
 			});
 		});
 	}
+	
+	function initTestResultModal() {
+		var $modal = $('#J_testResultModal');
+		var $resultNav = $modal.find('.test-result-nav'),
+			$headersNav = $modal.find('.test-headers-nav');
+		$resultNav.on('click', function() {
+			$(this).addClass('active').siblings().removeClass('active');
+			$modal.find('.result-json').show();
+			$modal.find('.result-headers').hide();
+		});
+		$headersNav.on('click', function() {
+			$(this).addClass('active').siblings().removeClass('active');
+			$modal.find('.result-json').hide();
+			$modal.find('.result-headers').show();
+		});
+	}
+	
+	var inspector = new InspectorJSON({
+		element: 'J_resultJson',
+		collapsed: false
+	});
+	
+	function showTestResult(result) {
+		var $modal = $('#J_testResultModal');
+		var $resultHeadersTbody = $modal.find('.result-headers tbody');
+		$('#J_resultJson').empty();
+		$resultHeadersTbody.empty().append($('#J_testResultHeadersTmpl').tmpl(result.headers));
+		if(result.contentType.mimeType == 'application/json') {
+			inspector.view(JSON.stringify(result.content));
+		}
+		$modal.modal({backdrop: 'static'});
+	}
+	/** 用例测试结束 **/
 	
 	function initQueryBtn() {
 		var $queryBtn = $('#J_queryBtn');
@@ -315,6 +348,7 @@ define(function(require, exports, module) {
 		initUpdateTestCaseBtn();
 		initDeleteTestCaseBtn();
 		initExecuteTestCaseBtn();
+		initTestResultModal();
 	}
 	
 	function initCaseParamOperations() {

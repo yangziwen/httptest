@@ -7,7 +7,8 @@ seajs.config({
 	paths: {
 		'jquery': STATIC_PATH + '/js/jquery',
 		'bootstrap': STATIC_PATH + '/js/bootstrap',
-		'app': STATIC_PATH + '/js/app'
+		'app': STATIC_PATH + '/js/app',
+		'json': STATIC_PATH + '/js/json'
 	},
 	alias: {
 		'jquery': 'jquery/jquery.js',

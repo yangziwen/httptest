@@ -10,47 +10,47 @@
 				<h4 class="modal-title"><strong>标题</strong></h4>
 			</div>
 			<div class="modal-body">
-					<form class="form-horizontal" role="form">
-						<input type="hidden" id="TC_id" name="id" />
-						<input type="hidden" id="TC_projectId" name="projectId" />
-						<div class="form-group">
-							<label for="TC_projectName" class="col-sm-4 control-label">项目名称：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" id="TC_projectName" name="projectName" placeholder="请输入项目名称" />
-							</div>
+				<form class="form-horizontal" role="form">
+					<input type="hidden" id="TC_id" name="id" />
+					<input type="hidden" id="TC_projectId" name="projectId" />
+					<div class="form-group">
+						<label for="TC_projectName" class="col-sm-4 control-label">项目名称：</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="TC_projectName" name="projectName" placeholder="请输入项目名称" />
 						</div>
-						<div class="form-group">
-							<label for="TC_baseUrl" class="col-sm-4 control-label">项目路径：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" id="TC_baseUrl" name="baseUrl" placeholder="请输入项目路径" />
-							</div>
+					</div>
+					<div class="form-group">
+						<label for="TC_baseUrl" class="col-sm-4 control-label">项目路径：</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="TC_baseUrl" name="baseUrl" placeholder="请输入项目路径" />
 						</div>
-						<div class="form-group">
-							<label for="TC_path" class="col-sm-4 control-label">接口路径：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" id="TC_path" name="path" placeholder="请输入接口路径" />
-							</div>
+					</div>
+					<div class="form-group">
+						<label for="TC_path" class="col-sm-4 control-label">接口路径：</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="TC_path" name="path" placeholder="请输入接口路径" />
 						</div>
-						<div class="form-group">
-							<label for="TC_method" class="col-sm-4 control-label">请求类型：</label>
-							<div class="col-sm-8">
-								<select id="TC_method" name="method" class="form-control">
-									<option>GET</option>
-									<option>POST</option>
-									<option>HEAD</option>
-									<option>PUT</option>
-									<option>DELETE</option>
-								</select>
-							</div>
+					</div>
+					<div class="form-group">
+						<label for="TC_method" class="col-sm-4 control-label">请求类型：</label>
+						<div class="col-sm-8">
+							<select id="TC_method" name="method" class="form-control">
+								<option>GET</option>
+								<option>POST</option>
+								<option>HEAD</option>
+								<option>PUT</option>
+								<option>DELETE</option>
+							</select>
 						</div>
-						<div class="form-group">
-							<label for="TC_description" class="col-sm-4 control-label">描述：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" id="TC_description" name="description" placeholder="请输入描述" />
-							</div>
+					</div>
+					<div class="form-group">
+						<label for="TC_description" class="col-sm-4 control-label">描述：</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="TC_description" name="description" placeholder="请输入描述" />
 						</div>
-					</form>
-				</div>
+					</div>
+				</form>
+			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary create-testcase">创建</button>
 				<button type="button" class="btn btn-primary update-testcase">更新</button>
