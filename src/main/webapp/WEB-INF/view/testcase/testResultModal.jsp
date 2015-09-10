@@ -14,9 +14,8 @@
 					<li class="active test-result-nav"><a href="javascript:void(0);">返回结果</a></li>
 					<li class="test-headers-nav"><a href="javascript:void(0);">响应头信息</a></li>
 				</ul>
-				<div style="margin-top: 10px; height: 100%; overflow-y: auto">
+				<div style="margin-top: 10px; height: 410px; overflow-y: auto">
 					<div id="J_resultJson" class="result-json" style="width: 100%; height: 450px; padding:20px;">
-						json
 					</div>
 					<table style="display:none;" class="table result-headers table-bordered _table-striped table-condensed table-hover ">
 						<tbody>

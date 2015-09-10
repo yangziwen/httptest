@@ -279,11 +279,11 @@ define(function(require, exports, module) {
 			var $tr = $(this).parents('tr').eq(0);
 			$.get(CTX_PATH + '/testcase/test', {
 				caseId: $tr.data('id')
-			}, function(data) {	// TODO 待续
+			}, function(data) {
 				if(data.code === 0) {
 					showTestResult(data.result);
 				} else {
-					common.alertMsg("failed");
+					common.alertMsg("测试失败!");
 				}
 			});
 		});
@@ -316,7 +316,7 @@ define(function(require, exports, module) {
 		$('#J_resultJson').empty();
 		$resultHeadersTbody.empty().append($('#J_testResultHeadersTmpl').tmpl(result.headers));
 		if(result.contentType.mimeType == 'application/json') {
-			inspector.view(JSON.stringify(result.content));
+			inspector.view($.parseJSON(result.content));
 		}
 		$modal.modal({backdrop: 'static'});
 	}

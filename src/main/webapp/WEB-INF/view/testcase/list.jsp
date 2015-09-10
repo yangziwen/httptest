@@ -5,6 +5,7 @@
 <head>
     <title>Http接口测试工具</title>
 	<%@ include file="../include/includeCss.jsp" %>
+	<link rel="stylesheet" href="${CTX_PATH}/css/inspector-json.css" />
 	<style type="text/css">
 		.padding-left-20 {
 			padding-left: 20px !important;
