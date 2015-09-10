@@ -45,12 +45,13 @@ import net.yangziwen.httptest.model.Project;
 import net.yangziwen.httptest.model.TestCase;
 import net.yangziwen.httptest.service.ProjectService;
 import net.yangziwen.httptest.service.TestCaseService;
-import net.yangziwen.httptest.util.HttpContextStore;
 import net.yangziwen.httptest.util.ResponseResult;
 
 @Controller
 @RequestMapping("/testcase")
 public class TestCaseController extends BaseController {
+	
+	public static final String HTTP_CONTEXT = "http_context";
 	
 	@Autowired
 	private TestCaseService testCaseService;
@@ -77,6 +78,7 @@ public class TestCaseController extends BaseController {
 		Page<TestCase> page = testCaseService.getTestCasePageResult(offset, limit, new QueryParamMap()
 			.addParam(projectIdList != null, "projectId__in", projectIdList)
 			.addParam(StringUtils.isNotBlank(pathKeyword), "path__contain", pathKeyword)
+			.orderByAsc("project_id")
 			.orderByAsc("path")
 		);
 		return successResult(TestCaseDto.from(page));
@@ -264,8 +266,7 @@ public class TestCaseController extends BaseController {
 	}
 	
 	private HttpClientContext getHttpContext(long projectId, HttpSession session) {
-		HttpContextStore store = (HttpContextStore) session.getAttribute(HttpContextStore.CONTEXT_STORE);
-		return store.getContext(projectId);
+		return (HttpClientContext) session.getAttribute(HTTP_CONTEXT);
 	}
 	
 }

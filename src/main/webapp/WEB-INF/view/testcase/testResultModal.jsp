@@ -27,7 +27,7 @@
 						<script type="text/x-jquery-tmpl" id="J_testResultHeadersTmpl">
 						<tr>
 							<td style="width: 40%;">${'${'}name}</td>
-							<td>${'${'}value}</td>
+							<td class="text-left">${'${'}value}</td>
 						</tr> 
 					</script>
 					</table>

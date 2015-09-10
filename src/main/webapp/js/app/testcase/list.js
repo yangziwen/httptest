@@ -179,7 +179,7 @@ define(function(require, exports, module) {
 			var $tr = $(this).parents('tr').eq(0),
 				$tds = $tr.children();
 			var caseId = $tr.data('id'),
-				projectName = $tds.eq(0).html(),
+				projectName = $tr.data('project-name'), //$tds.eq(0).html(),
 				baseUrl = $tr.data('baseurl'),
 				description = $tr.data('description'),
 				path = $tr.data('path');
