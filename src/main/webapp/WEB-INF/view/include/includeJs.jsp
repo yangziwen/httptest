@@ -8,7 +8,8 @@ seajs.config({
 		'jquery': STATIC_PATH + '/js/jquery',
 		'bootstrap': STATIC_PATH + '/js/bootstrap',
 		'app': STATIC_PATH + '/js/app',
-		'json': STATIC_PATH + '/js/json'
+		'json': STATIC_PATH + '/js/json',
+		'syntaxhighlighter': STATIC_PATH + '/js/syntaxhighlighter'
 	},
 	alias: {
 		'jquery': 'jquery/jquery.js',

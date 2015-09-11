@@ -315,6 +315,13 @@ define(function(require, exports, module) {
 		collapsed: false
 	});
 	
+	require('syntaxhighlighter/shBrushCss');
+	require('syntaxhighlighter/shBrushJScript');
+	require('syntaxhighlighter/shBrushXml');
+	
+//	var jsformater = require('app/util/jsformater')
+	var beautify = require('app/util/beautify');
+	
 	function showTestResult(result) {
 		var $modal = $('#J_testResultModal');
 		var $title = $modal.find('.modal-title');
@@ -323,16 +330,33 @@ define(function(require, exports, module) {
 		var $resultJson = $('#J_resultJson').empty();
 		var $resultHtml = $('#J_resultHtml').empty();
 		$resultHeadersTbody.empty().append($('#J_testResultHeadersTmpl').tmpl(result.headers));
-		if(result.contentType.mimeType == 'application/json') {
+		var mimeType = result.contentType.mimeType;
+		result.content = result.content.trim();
+		if(mimeType == 'application/json' 
+				|| (mimeType == 'text/plain' && mightBeJson(result.content))) {
 			inspector.view($.parseJSON(result.content));
 			$resultJson.show().siblings().hide();
-		} else if(result.contentType.mimeType.indexOf('text/') == 0) {
-			$resultHtml.append('<pre class="brush: html"></pre>');
-			var $pre = $resultHtml.find('pre').text(result.content.trim());
+		} else if(mimeType.indexOf('text/') == 0) {
+			if(mimeType == 'text/javascript') {
+				result.content = beautify.js_beautify(result.content);
+				$resultHtml.append('<pre class="brush: js"></pre>');
+			} else {
+				$resultHtml.append('<pre class="brush: html;"></pre>');
+			}
+			var $pre = $resultHtml.find('pre').text(result.content);
 			SyntaxHighlighter.highlight($pre[0]);
 			$resultHtml.show().siblings().hide();
 		}
 		$modal.modal({backdrop: 'static'});
+	}
+	
+	/** 返回true，则有可能是json **/
+	function mightBeJson(content) {
+		if(!content || (typeof content) != 'string') {
+			return false;
+		}
+		content = content.trim();
+		return content.startsWith('{') && content.endsWith('}');
 	}
 	/** 用例测试结束 **/
 	
