@@ -7,18 +7,27 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class DatabaseInitiator {
+public class DBInitiator {
 	
-	private DatabaseInitiator() {}
+	private static final File DB_FOLDER = new File(FilenameUtils.concat(SystemUtils.USER_DIR, "db"));
+	
+	private DBInitiator() {}
 
 	@SuppressWarnings("resource")
 	public static final void initDatabase() throws IOException {
-		File dbFolder = new File(FilenameUtils.concat(SystemUtils.USER_DIR, "db"));
-		if(!dbFolder.exists()) {
-			dbFolder.mkdirs();
+		if(!DB_FOLDER.exists()) {
+			DB_FOLDER.mkdirs();
 		}
 		Profiles.setProfileAsSystemProperty(Profiles.DEVELOPMENT_INIT);
 		new ClassPathXmlApplicationContext("spring/applicationContext.xml");
+	}
+	
+	public static final boolean existsDb() {
+		if(!DB_FOLDER.exists()) {
+			return false;
+		}
+		File dbFile = new File(FilenameUtils.concat(DB_FOLDER.getAbsolutePath(), "httptest.db"));
+		return dbFile.exists();
 	}
 	
 	public static void main(String[] args) throws IOException {
