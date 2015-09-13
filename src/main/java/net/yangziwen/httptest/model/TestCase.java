@@ -1,7 +1,9 @@
 package net.yangziwen.httptest.model;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,16 +11,22 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import net.yangziwen.httptest.dao.base.EnumPropertyEditor;
 import net.yangziwen.httptest.exception.HttpTestException;
+import net.yangziwen.httptest.model.CaseParam.Type;
 import net.yangziwen.httptest.model.base.AbstractModel;
 import net.yangziwen.httptest.util.EnumUtil.EnumConverter;
 
@@ -119,19 +127,64 @@ public class TestCase extends AbstractModel {
 			@Override
 			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
 				HttpPost post = new HttpPost(url);
+				
+				boolean needMultipart = ListUtils.indexOf(paramList, new Predicate<CaseParam>() {
+					@Override
+					public boolean evaluate(CaseParam caseParam) {
+						return caseParam.getType() == Type.UPLOAD_PARAM;
+					}
+				}) >= 0;
+				
+				return needMultipart
+						? fillMultipartEntity(post, paramList)
+						: fillUrlEncodedFormEntity(post, paramList);
+			}
+			
+			/** 文件上传 **/
+			private HttpPost fillMultipartEntity(HttpPost post, List<CaseParam> paramList) {
+				MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+						.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+						.setCharset(DEFAULT_CHARSET);
+
+				ContentType contentType = ContentType.create("text/plain", DEFAULT_CHARSET);
+
+				for (CaseParam param : paramList) {
+					switch (param.getType()) {
+						case PARAM:
+							builder.addTextBody(param.getName(), param.getValue(), contentType);
+							break;
+						case UPLOAD_PARAM:
+							File file = new File(param.getValue());
+							if (!file.exists()) {
+								throw HttpTestException.notExistException("File does not exist! [%s]", param.getValue());
+							}
+							builder.addBinaryBody(param.getName(), file);
+							break;
+						case HEADER:
+							post.addHeader(param.getName(), param.getValue());
+							break;
+						default:;
+					}
+				}
+				post.setEntity(builder.build());
+				return post;
+			}
+			
+			/** 表单提交 **/
+			private HttpPost fillUrlEncodedFormEntity(HttpPost post, List<CaseParam> paramList) {
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
-		        for (CaseParam param: paramList) {
-		        	switch(param.getType()) {
-		        		case PARAM:
-		        			params.add(new BasicNameValuePair(param.getName(), param.getValue()));
-		        			break;
-		        		case HEADER:
-		        			post.addHeader(param.getName(), param.getValue());
-		        			break;
-		        		default:;
-		        	}
-		        }
-		        try {
+				for (CaseParam param : paramList) {
+					switch (param.getType()) {
+						case PARAM:
+							params.add(new BasicNameValuePair(param.getName(), param.getValue()));
+							break;
+						case HEADER:
+							post.addHeader(param.getName(), param.getValue());
+							break;
+						default:;
+					}
+				}
+				try {
 					post.setEntity(new UrlEncodedFormEntity(params));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
@@ -139,6 +192,8 @@ public class TestCase extends AbstractModel {
 				return post;
 			}
 		};
+		
+		public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 		
 		public abstract HttpUriRequest createRequest(String url, List<CaseParam> paramList);
 		
