@@ -373,6 +373,7 @@ define(function(require, exports, module) {
 		});
 		$queryBtn.on('click', function() {
 			offset = 0;
+			updateHash();
 			refreshTestCaseTbl();
 		});
 	}
@@ -381,8 +382,29 @@ define(function(require, exports, module) {
 		$('#J_clearBtn').on('click', function() {
 			offset = 0;
 			common.clearForm($('#J_queryArea form'));
+			updateHash();
 			refreshTestCaseTbl();
 		});
+	}
+	
+	function updateHash() {
+		var hashObj = {
+			projectName: $('#J_projectName').val() || null,
+			pathKeyword: $('#J_pathKeyword').val() || null
+		}
+		common.hash(hashObj);
+	}
+	
+	function initHashChange() {
+		var $window = $(window),
+			$projectName = $('#J_projectName'),
+			$pathKeyword = $('#J_pathKeyword');
+		$window.on('hashchange', function() {
+			var hashObj = common.hash();
+			$projectName.val(hashObj['projectName'] || '');
+			$pathKeyword.val(hashObj['pathKeyword'] || '');
+		});
+		$(window).trigger('hashchange');
 	}
 	
 	function initTestCaseOperations() {
@@ -400,6 +422,7 @@ define(function(require, exports, module) {
 	}
 	
 	function init() {
+		initHashChange();
 		refreshTestCaseTbl();
 		initTestCaseOperations();
 		initCaseParamOperations();

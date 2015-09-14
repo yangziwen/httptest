@@ -19,6 +19,44 @@ define(function(require, exports, module){
 	    });
 	};
 	
+	function hash(key, value) {
+		var hashObj = _hash();
+		if(key === undefined) {
+			return hashObj;
+		}
+		if ($.isPlainObject(key)) {
+			$.extend(hashObj, key);
+		} else if(value === undefined) {
+			return hashObj[key];
+		} else {
+			hashObj[key + ''] = value;
+		}
+		var hashArr = [];
+		for(var key in hashObj) {
+			if(hashObj[key] === null) {
+				continue;
+			}
+			hashArr.push(key + '=' + hashObj[key]);
+		}
+		location.hash = hashArr.length > 0 ? '?' + hashArr.join('&'): '';
+	}
+	
+	var hashRe = /(?:\?|\&)([\w\d]+)=([^\?\&=]*)/g;
+	
+	function _hash() {
+		var hashObj = {};
+		var hash = location.hash;
+		if(!hash || hash == '#') {
+			return hashObj;
+		}
+		hash = hash.substring(1);
+		var pair = null;
+		while((pair = hashRe.exec(hash)) != null) {
+			hashObj[pair[1]] = pair[2];
+		}
+		return hashObj;
+	}
+	
 	/**
 	 * 调用bootstrap样式的弹出框
 	 */
@@ -248,6 +286,7 @@ define(function(require, exports, module){
 	})();
 	
 	module.exports = {
+		hash: hash,
 		alertMsg: alertMsg,
 		confirmMsg: confirmMsg,
 		collectParams: collectParams,

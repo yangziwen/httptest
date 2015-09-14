@@ -66,7 +66,7 @@
 				     		</tbody>
 							<script type="text/x-jquery-tmpl" id="J_projectTmpl">
 								<tr data-id="${'${'}id}">
-				     				<td>${'${'}name}</td>
+				     				<td><a href="${CTX_PATH}/testcase/list.htm#?projectName=${'${'}name}">${'${'}name}</a></td>
 				     				<td>${'${'}baseUrl}</td>
 				     				<td>
 				     					<button class="btn btn-primary btn-xs open-update-modal">修改</button>
