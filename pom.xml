@@ -11,7 +11,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<springframework.version>3.2.13.RELEASE</springframework.version>
-		<shiro.version>1.2.3</shiro.version>
 		<jackson.version>2.2.3</jackson.version>
 		<jetty.version>7.6.11.v20130520</jetty.version>
 		<spring.profiles.active>development</spring.profiles.active>
@@ -63,19 +62,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
 			<version>${springframework.version}</version>
-		</dependency>
-		
-		<!-- shiro related -->
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-spring</artifactId>
-			<version>${shiro.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-ehcache</artifactId>
-			<version>${shiro.version}</version>
 		</dependency>
 		
 		<!-- persistence related -->

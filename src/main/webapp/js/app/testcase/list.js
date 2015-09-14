@@ -319,8 +319,8 @@ define(function(require, exports, module) {
 	require('syntaxhighlighter/shBrushJScript');
 	require('syntaxhighlighter/shBrushXml');
 	
-//	var beautify = require('app/util/beautify');
-	var beautify = require('app/util/beautify-html');
+	var beautifyJs = require('app/util/beautify');
+	var beautifyHtml = require('app/util/beautify-html');
 	
 	function showTestResult(result) {
 		var $modal = $('#J_testResultModal');
@@ -338,10 +338,10 @@ define(function(require, exports, module) {
 			$resultJson.show().siblings().hide();
 		} else if(mimeType.indexOf('text/') == 0) {
 			if(mimeType == 'text/javascript') {
-				result.content = beautify.js_beautify(result.content);
+				result.content = beautifyJs.js_beautify(result.content);
 				$resultHtml.append('<pre class="brush: js"></pre>');
 			} else {
-				result.content = beautify.html_beautify(result.content);
+				result.content = beautifyHtml.html_beautify(result.content);
 				$resultHtml.append('<pre class="brush: html;"></pre>');
 			}
 			var $pre = $resultHtml.find('pre').text(result.content);
