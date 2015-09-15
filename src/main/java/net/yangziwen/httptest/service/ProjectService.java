@@ -1,14 +1,12 @@
 package net.yangziwen.httptest.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 import net.yangziwen.httptest.dao.CaseParamDao;
 import net.yangziwen.httptest.dao.ProjectDao;
@@ -53,9 +51,12 @@ public class ProjectService {
 	@Transactional
 	public void deleteProject(long id) {
 		List<TestCase> testCaseList = testCaseDao.list(new QueryParamMap().addParam("projectId", id));
-		List<Long> caseIdList = Lists.transform(testCaseList, new Function<TestCase, Long>() {
-			@Override public Long apply(TestCase tc) { return tc.getId(); }
-		});
+		
+		List<Long> caseIdList = new ArrayList<Long>();
+		for(TestCase testCase: testCaseList) {
+			caseIdList.add(testCase.getId());
+		}
+		
 		projectDao.deleteById(id);
 		testCaseDao.deleteByProjectId(id);
 		caseParamDao.deleteByCaseIds(caseIdList);

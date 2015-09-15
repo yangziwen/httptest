@@ -2,12 +2,14 @@ package net.yangziwen.httptest.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpResponse;
@@ -29,10 +31,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.util.IOUtils;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 
 import net.yangziwen.httptest.controller.base.BaseController;
 import net.yangziwen.httptest.dao.base.Page;
@@ -53,6 +53,11 @@ public class TestCaseController extends BaseController {
 	
 	public static final String HTTP_CONTEXT = "http_context";
 	
+	private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+	
+	private static final CollectionType CASE_PARAM_COLL_TYPE = JSON_MAPPER.getTypeFactory()
+			.constructCollectionType(List.class, CaseParam.class);
+	
 	@Autowired
 	private TestCaseService testCaseService;
 	
@@ -69,11 +74,16 @@ public class TestCaseController extends BaseController {
 			) {
 		List<Long> projectIdList = null;
 		if(StringUtils.isNotBlank(projectName)) {
-			projectIdList = Lists.transform(projectService.getProjectListResult(new QueryParamMap()
+			
+			List<Project> projectList = projectService.getProjectListResult(new QueryParamMap()
 				.addParam("name__contain", projectName)
-			), new Function<Project, Long>() {
-				@Override public Long apply(Project project) { return project.getId(); }
-			});
+			);
+			
+			projectIdList = new ArrayList<Long>();
+			for(Project project: projectList) {
+				projectIdList.add(project.getId());
+			}
+			
 		}
 		Page<TestCase> page = testCaseService.getTestCasePageResult(offset, limit, new QueryParamMap()
 			.addParam(projectIdList != null, "projectId__in", projectIdList)
@@ -178,7 +188,15 @@ public class TestCaseController extends BaseController {
 		if(testCase == null) {
 			throw HttpTestException.notExistException("TestCase[%d] does not exist!", caseId);
 		}
-		List<CaseParam> caseParamList = JSON.parseArray(caseParamListJson, CaseParam.class);
+		
+		List<CaseParam> caseParamList = null;
+		try {
+			caseParamList = JSON_MAPPER.readValue(caseParamListJson, CASE_PARAM_COLL_TYPE);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw HttpTestException.invalidParameterException("Invalid caseParamListJson [%s]", caseParamListJson);
+		}
+		
 		try {
 			testCaseService.renewCaseParams(caseId, caseParamList);
 			return successResult("CaseParams of testCase[%d] are renewed!", caseId);
@@ -229,7 +247,7 @@ public class TestCaseController extends BaseController {
 		} catch (Exception e) {
 			throw HttpTestException.operationFailedException("Failed to test testCase[%d]", testCase.getId());
 		} finally {
-			IOUtils.close(client);
+			IOUtils.closeQuietly(client);
 		}
 	}
 	

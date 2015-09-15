@@ -10,8 +10,6 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -181,7 +179,7 @@ public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 				continue;
 			}
 			Map<String, Object> orParam = (Map<String, Object>)params.remove(key);
-			if(MapUtils.isEmpty(orParam)) {
+			if(orParam == null || orParam.isEmpty()) {
 				continue;
 			}
 			orParamList.add(orParam);
@@ -258,7 +256,7 @@ public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 	}
 	
 	private String generateGroupBy(Collection<?> groupBy) {
-		if(CollectionUtils.isEmpty(groupBy)) {
+		if(groupBy == null || groupBy.isEmpty()) {
 			return "";
 		}
 		StringBuilder groupByBuff = new StringBuilder(" group by ");
@@ -292,7 +290,7 @@ public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 	}
 	
 	private String generateOrderBy(Map<?, ?> orderByParams) {
-		if(MapUtils.isEmpty(orderByParams)) {
+		if(orderByParams == null || orderByParams.isEmpty()) {
 			return "";
 		}
 		StringBuilder orderByBuff = new StringBuilder();

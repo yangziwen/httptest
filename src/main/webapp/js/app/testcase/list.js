@@ -4,8 +4,13 @@ define(function(require, exports, module) {
 
 	require('jquery.tmpl');
 	require('bootstrap.pagebar');
+	require('syntaxhighlighter/shBrushCss.js');
+	require('syntaxhighlighter/shBrushJScript.js');
+	require('syntaxhighlighter/shBrushXml.js');
 	var $ = require('jquery'),
-		common = require('app/common');
+		common = require('app/common'),
+		beautifyJs = require('app/util/beautify.js'),
+		beautifyHtml = require('app/util/beautify-html.js');
 	var testCaseValidator = require('app/testcase/validator').validate($('#J_testCaseModal form'));
 	
 	$('#J_testCaseModal').on('hide.bs.modal', function() {
@@ -314,13 +319,6 @@ define(function(require, exports, module) {
 		element: 'J_resultJson',
 		collapsed: false
 	});
-	
-	require('syntaxhighlighter/shBrushCss');
-	require('syntaxhighlighter/shBrushJScript');
-	require('syntaxhighlighter/shBrushXml');
-	
-	var beautifyJs = require('app/util/beautify');
-	var beautifyHtml = require('app/util/beautify-html');
 	
 	function showTestResult(result) {
 		var $modal = $('#J_testResultModal');

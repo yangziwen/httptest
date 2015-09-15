@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -25,7 +24,7 @@ public abstract class AbstractEditPropertyJdbcDaoImpl<E extends AbstractModel> e
 	 */
 	protected Object processValueBeforeQuery(Object value) {
 		Map<Class<?>, CustomPropertyEditor> editorMap = getPropertyEditorMap();
-		if(MapUtils.isEmpty(editorMap)) {
+		if(editorMap == null || editorMap.isEmpty()) {
 			return value;
 		}
 		Object newValue = null;

@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -99,7 +98,7 @@ public abstract class AbstractJdbcDaoImpl<E extends AbstractModel>  extends Abst
 	}
 	
 	public int batchSave(List<E> entityList, int batchSize) {
-		if(CollectionUtils.isEmpty(entityList)) {
+		if(entityList == null || entityList.isEmpty()) {
 			return 0;
 		}
 		return batchSave(entityList.toArray(beanMapping.emptyArray()), batchSize);
@@ -140,7 +139,7 @@ public abstract class AbstractJdbcDaoImpl<E extends AbstractModel>  extends Abst
 	}
 	
 	public int batchUpdate(List<E> entityList, int batchSize) {
-		if(CollectionUtils.isEmpty(entityList)) {
+		if(entityList == null || entityList.isEmpty()) {
 			return 0;
 		}
 		return batchUpdate(entityList.toArray(beanMapping.emptyArray()), batchSize);
@@ -177,7 +176,7 @@ public abstract class AbstractJdbcDaoImpl<E extends AbstractModel>  extends Abst
 	}
 	
 	public int batchSaveOrUpdate(List<E> entityList, int batchSize) {
-		if(CollectionUtils.isEmpty(entityList)) {
+		if(entityList == null || entityList.isEmpty()) {
 			return 0;
 		}
 		return batchSaveOrUpdate(entityList.toArray(beanMapping.emptyArray()), batchSize);
@@ -205,7 +204,7 @@ public abstract class AbstractJdbcDaoImpl<E extends AbstractModel>  extends Abst
 	}
 	
 	public int batchDeleteByIds(Collection<Long> ids) {
-		if(CollectionUtils.isEmpty(ids)) {
+		if(ids == null || ids.isEmpty()) {
 			return 0;
 		}
 		String sql = "delete from " + beanMapping.getTableName() + " where " + beanMapping.getIdColumn() + " in (:ids)";

@@ -11,8 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.collections4.Predicate;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -128,12 +126,13 @@ public class TestCase extends AbstractModel {
 			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
 				HttpPost post = new HttpPost(url);
 				
-				boolean needMultipart = ListUtils.indexOf(paramList, new Predicate<CaseParam>() {
-					@Override
-					public boolean evaluate(CaseParam caseParam) {
-						return caseParam.getType() == Type.UPLOAD_PARAM;
+				boolean needMultipart = false;
+				for(CaseParam cp: paramList) {
+					if(cp.getType() == Type.UPLOAD_PARAM) {
+						needMultipart = true;
+						break;
 					}
-				}) >= 0;
+				}
 				
 				return needMultipart
 						? fillMultipartEntity(post, paramList)

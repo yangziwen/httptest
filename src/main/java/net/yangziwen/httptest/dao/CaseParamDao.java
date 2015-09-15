@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import net.yangziwen.httptest.dao.base.AbstractEditPropertyJdbcDaoImpl;
@@ -34,7 +33,7 @@ public class CaseParamDao extends AbstractEditPropertyJdbcDaoImpl<CaseParam> {
 	}
 	
 	public int deleteByCaseIds(List<Long> caseIdList) {
-		if(CollectionUtils.isEmpty(caseIdList)) {
+		if(caseIdList == null || caseIdList.isEmpty()) {
 			return 0;
 		}
 		String sql = "delete from " + getTableName() + " where case_id in (:caseIdList)";

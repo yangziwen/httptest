@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +53,7 @@ public class TestCaseService {
 	
 	@Transactional
 	public void renewCaseParams(long caseId, List<CaseParam> caseParamList) {
-		if(CollectionUtils.isEmpty(caseParamList)) {
+		if(caseParamList == null || caseParamList.isEmpty()) {
 			caseParamDao.deleteByCaseIds(caseId);
 			return;
 		}

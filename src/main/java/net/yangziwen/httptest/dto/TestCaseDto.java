@@ -1,13 +1,11 @@
 package net.yangziwen.httptest.dto;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 
 import net.yangziwen.httptest.dao.base.Page;
 import net.yangziwen.httptest.dao.base.QueryParamMap;
@@ -74,9 +72,12 @@ public class TestCaseDto {
 		List<Project> projectList = ensureProjectService().getProjectListResult(new QueryParamMap()
 			.addParam("id__in", projectIdSet)
 		);
-		Map<Long, Project> projectMap = Maps.uniqueIndex(projectList, new Function<Project, Long>() {
-			@Override public Long apply(Project p) { return p.getId(); }
-		});
+		
+		Map<Long, Project> projectMap = new HashMap<Long, Project>();
+		for(Project project: projectList) {
+			projectMap.put(project.getId(), project);
+		}
+		
 		List<TestCaseDto> dtoList = new ArrayList<TestCaseDto>(list.size());
 		for(TestCase tc: list) {
 			dtoList.add(from(tc, projectMap.get(tc.getProjectId())));
