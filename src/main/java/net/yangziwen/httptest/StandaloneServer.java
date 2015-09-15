@@ -12,6 +12,9 @@ public class StandaloneServer {
 	public static void main(String[] args) throws Exception {
 		
 		String contextPath = System.getProperty("contextpath", "/");
+		if(!contextPath.startsWith("/")) {
+			contextPath = "/" + contextPath;
+		}
 		int port = Integer.getInteger("port", 8989);
 
 		Server server = createServer(contextPath, port);

@@ -36,8 +36,8 @@
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<script src="${STATIC_PATH}/js/json/inspector-json.js"></script>
-<script src="${STATIC_PATH}/js/syntaxhighlighter/shCore.js"></script>
-<%-- <script src="${STATIC_PATH}/js/syntaxhighlighter/shBrushXml.js"></script>
-<script src="${STATIC_PATH}/js/syntaxhighlighter/shBrushCss.js"></script>
-<script src="${STATIC_PATH}/js/syntaxhighlighter/shBrushJScript.js"></script> --%>
+<script src="${static_path}/js/json/inspector-json.js"></script>
+<script src="${static_path}/js/syntaxhighlighter/shCore.js"></script>
+<%-- <script src="${static_path}/js/syntaxhighlighter/shBrushXml.js"></script>
+<script src="${static_path}/js/syntaxhighlighter/shBrushCss.js"></script>
+<script src="${static_path}/js/syntaxhighlighter/shBrushJScript.js"></script> --%>
