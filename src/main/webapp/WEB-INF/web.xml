@@ -22,6 +22,10 @@
 	</listener>
 	
 	<listener>
+		<listener-class>net.yangziwen.httptest.util.DBInitiator</listener-class>
+	</listener>
+	
+	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 	
