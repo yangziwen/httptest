@@ -238,10 +238,11 @@ public class TestCaseController extends BaseController {
 		addCookies(host, caseParamList, context);
 		
 		try {
+			final long sendTime = System.currentTimeMillis();
 			return client.execute(request, new ResponseHandler<ResponseResult>() {
 				@Override
 				public ResponseResult handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
-					return new ResponseResult(response);
+					return new ResponseResult(response, System.currentTimeMillis() - sendTime);
 				}
 			}, context);
 		} catch (Exception e) {

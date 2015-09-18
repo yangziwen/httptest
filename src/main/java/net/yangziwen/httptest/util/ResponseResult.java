@@ -24,7 +24,12 @@ public class ResponseResult {
 	
 	private String content;
 	
-	public ResponseResult(HttpResponse response) {
+	private long timeSpentMillis;
+	
+	private long bodySize;
+	
+	public ResponseResult(HttpResponse response, long timeSpentMillis) {
+		this.timeSpentMillis = timeSpentMillis;
 		statusLine = response.getStatusLine().toString();
 		Header header = response.getFirstHeader(CONTENT_TYPE);
 		if(header != null) {
@@ -38,45 +43,39 @@ public class ResponseResult {
 			try {
 				if (mimeType.equals("application/json") || mimeType.startsWith("text")) {
 					content = EntityUtils.toString(response.getEntity());
+					bodySize = content.getBytes().length;
 				} else if (mimeType.startsWith("image")) {
-					content = Base64.encodeBase64String(EntityUtils.toByteArray(response.getEntity()));
+					byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+					content = Base64.encodeBase64String(bytes);
+					bodySize = bytes.length;
 				}
 			} catch (Exception e) {
 			}
 		}
 	}
 
-	public String getStatusLine() {
-		return statusLine;
+	public long getTimeSpentMillis() {
+		return timeSpentMillis;
 	}
 
-	public void setStatusLine(String statusLine) {
-		this.statusLine = statusLine;
+	public String getStatusLine() {
+		return statusLine;
 	}
 
 	public List<Header> getHeaders() {
 		return headers;
 	}
 
-	public void setHeaders(List<Header> headers) {
-		this.headers = headers;
-	}
-
 	public ContentType getContentType() {
 		return contentType;
-	}
-
-	public void setContentType(ContentType contentType) {
-		this.contentType = contentType;
 	}
 
 	public String getContent() {
 		return content;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public long getBodySize() {
+		return bodySize;
 	}
-	
-	
+
 }

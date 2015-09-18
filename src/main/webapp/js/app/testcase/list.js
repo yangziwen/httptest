@@ -323,7 +323,13 @@ define(function(require, exports, module) {
 	function showTestResult(result) {
 		var $modal = $('#J_testResultModal');
 		var $title = $modal.find('.modal-title');
-		$title.html('<strong>测试结果 [' + result.statusLine + ']</strong>');
+		$title.html('<strong>测试结果 ' + 
+			[
+				'Status:[' + result.statusLine + ']',
+				'Time:[' + result.timeSpentMillis + 'ms]',
+				'Size:[' + toDisplaySize(result.bodySize) + ']'
+			].join(' ')
+			+ '</strong>');
 		var $resultHeadersTbody = $modal.find('.result-headers tbody');
 		var $resultJson = $('#J_resultJson').empty();
 		var $resultHtml = $('#J_resultHtml').empty();
@@ -367,6 +373,22 @@ define(function(require, exports, module) {
 		}
 		content = content.trim();
 		return content.startsWith('{') && content.endsWith('}');
+	}
+	
+	var sizeUnits = ['b', 'KB', 'MB', 'GB', 'TB'];
+	
+	function toDisplaySize(size) {
+		size = parseInt(size);
+		if(isNaN(size)) {
+			return -1;
+		}
+		for(var i = 0, l = sizeUnits.length; i < l; i ++) {
+			if(size < 1024) {
+				break;
+			}
+			size /= 1024;
+		}
+		return size.toFixed(2).replace(/\.00/, '') + sizeUnits[i];
 	}
 	/** 用例测试结束 **/
 	
