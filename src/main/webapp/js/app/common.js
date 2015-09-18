@@ -124,7 +124,7 @@ define(function(require, exports, module){
 						'<h4 class="modal-title"><strong>确认<strong></h4>',
 					'</div>',
 					'<div class="modal-body">',
-						'<p style="font-size: 16px; text-align: center;"></p>',
+						'<p style="font-size: 16px; text-align: center; word-wrap: break-word;"></p>',
 					'</div>',
 					'<div class="modal-footer">',
 						'<button class="btn btn-primary confirm" data-dismiss="modal">确定</button>',

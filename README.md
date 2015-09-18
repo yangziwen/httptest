@@ -1,7 +1,7 @@
 # Http接口测试工具
 
 ### 介绍
-本工具用于测试http接口的返回结果，可自定义请求的参数、上传文件路径、header和cookie的值，并支持html，json，jsonp等响应类型。
+本工具用于测试http接口的返回结果，可自定义请求的参数、上传文件路径、header和cookie的值，并支持html、json、jsonp、图片等响应类型。
 
 ### 编译部署
 

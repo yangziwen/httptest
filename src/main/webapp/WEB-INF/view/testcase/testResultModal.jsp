@@ -20,6 +20,8 @@
 						</div>
 						<div id="J_resultHtml">
 						</div>
+						<div id="J_resultImg">
+						</div>
 					</div>
 					<table style="display:none;" class="table result-headers table-bordered _table-striped table-condensed table-hover ">
 						<tbody>

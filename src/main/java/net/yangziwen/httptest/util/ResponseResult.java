@@ -3,6 +3,7 @@ package net.yangziwen.httptest.util;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -33,10 +34,13 @@ public class ResponseResult {
 		}
 		headers = Arrays.asList(response.getAllHeaders());
 		String mimeType = contentType.getMimeType();
-		if(StringUtils.isNotBlank(mimeType)
-				&& (mimeType.equals("application/json") || mimeType.startsWith("text"))) {
+		if(StringUtils.isNotBlank(mimeType)) {
 			try {
-				content = EntityUtils.toString(response.getEntity());
+				if (mimeType.equals("application/json") || mimeType.startsWith("text")) {
+					content = EntityUtils.toString(response.getEntity());
+				} else if (mimeType.startsWith("image")) {
+					content = Base64.encodeBase64String(EntityUtils.toByteArray(response.getEntity()));
+				}
 			} catch (Exception e) {
 			}
 		}

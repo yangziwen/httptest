@@ -117,7 +117,7 @@ define(function(require, exports, module) {
 			var $tr = $this.parents('tr').eq(0),
 				$tds = $tr.children();
 			var id = $tr.data('id'),
-				name = $tds.eq(0).html(),
+				name = $tds.eq(0).children('a').html(),
 				baseUrl = $tds.eq(1).html();
 			var $modal = $('#J_projectModal');
 			$modal.find('.modal-title > strong').html('修改项目信息');

@@ -327,9 +327,10 @@ define(function(require, exports, module) {
 		var $resultHeadersTbody = $modal.find('.result-headers tbody');
 		var $resultJson = $('#J_resultJson').empty();
 		var $resultHtml = $('#J_resultHtml').empty();
+		var $resultImg = $('#J_resultImg').empty();
 		$resultHeadersTbody.empty().append($('#J_testResultHeadersTmpl').tmpl(result.headers));
 		var mimeType = result.contentType.mimeType;
-		result.content = result.content.trim();
+		result.content = result.content === null? "": result.content.trim();
 		if(mimeType == 'application/json' 
 				|| (mimeType == 'text/plain' && mightBeJson(result.content))) {
 			inspector.view($.parseJSON(result.content));
@@ -345,6 +346,13 @@ define(function(require, exports, module) {
 			var $pre = $resultHtml.find('pre').text(result.content);
 			SyntaxHighlighter.highlight($pre[0]);
 			$resultHtml.show().siblings().hide();
+		} else if(mimeType.indexOf('image/') == 0) {
+			var $img = $('<img/>').css({border: '2px solid #ddd'}).appendTo($resultImg);
+			$img.attr('src', 'data:' + mimeType + ';base64, ' + result.content);
+			$resultImg.show().siblings().hide();
+			$img.on('load', function() {
+				$img.attr('title', $img.width() + '×' + $img.height());
+			})
 		}
 		$modal.find('.modal-dialog').css({
 			width: 800

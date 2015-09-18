@@ -21,6 +21,22 @@
 		table.inner-table td {
 			padding: 5px;
 		}
+		#J_testCaseTbody tr td:nth-child(2) {
+			max-width: 520px;
+			word-wrap: break-word;
+		}
+		#J_testCaseTbody tr td:nth-child(2) span {
+			vertical-align: middle; 
+			display: inline-block; 
+		}
+		#J_testCaseTbody tr td:nth-child(2) span:nth-child(1) {
+			word-wrap:break-word; 
+			width: 480px;
+		}
+		#J_testCaseTbody tr td:nth-child(2) span:nth-child(2) {
+			height:100%;
+			width:1px;
+		}
 	</style>
 </head>
 <body>
@@ -72,7 +88,7 @@
 				     		<thead>
 				     			<tr>
 				     				<th style="width: 250px;">项目名称</th>
-				     				<th>接口url</th>
+				     				<th style="max-width: 520px;">接口url</th>
 				     				<th style="width: 80px;">请求类型</th>
 				     				<th style="width: 100px;">管理</th>
 				     			</tr>
@@ -85,7 +101,10 @@
 										data-description="${'${'}description}"
 										title="${'${'} '[' + projectName + '] ' + description}">
 				     				<td>[ ${'${'}projectName} ] <br/> ${'${'}description} </td>
-				     				<td style="line-height:50px;" class="text-left padding-left-20">${'${'}url}</td>
+				     				<td class="text-left padding-left-20">
+										<span>${'${'}url}</span>
+										<span></span>
+									</td>
 									<td style="line-height:50px;">${'${'}method}</td>
 				     				<td>
 				     					<button class="btn btn-primary btn-xs open-update-modal">修改</button>
