@@ -25,17 +25,16 @@
 			max-width: 520px;
 			word-wrap: break-word;
 		}
-		#J_testCaseTbody tr td:nth-child(2) span {
+		#J_testCaseTbody tr td span {
 			vertical-align: middle; 
 			display: inline-block; 
 		}
-		#J_testCaseTbody tr td:nth-child(2) span:nth-child(1) {
+		#J_testCaseTbody tr td span:nth-child(1) {
 			word-wrap:break-word; 
-			width: 480px;
 		}
-		#J_testCaseTbody tr td:nth-child(2) span:nth-child(2) {
+		#J_testCaseTbody tr td span:nth-child(2) {
 			height:100%;
-			width:1px;
+			width:0px;
 		}
 	</style>
 </head>
@@ -87,9 +86,9 @@
 				     	<table class="table table-bordered table-striped table-condensed table-hover ">
 				     		<thead>
 				     			<tr>
-				     				<th style="width: 250px;">项目名称</th>
+				     				<th style="width: 240px; min-width: 140px;">项目名称</th>
 				     				<th style="max-width: 520px;">接口url</th>
-				     				<th style="width: 80px;">请求类型</th>
+				     				<th style="width: 80px; min-width: 65px;">请求类型</th>
 				     				<th style="width: 100px;">管理</th>
 				     			</tr>
 				     		</thead>
@@ -100,12 +99,18 @@
 										data-baseurl="${'${'}baseUrl}" data-project-name="${'${'}projectName}"
 										data-description="${'${'}description}"
 										title="${'${'} '[' + projectName + '] ' + description}">
-				     				<td>[ ${'${'}projectName} ] <br/> ${'${'}description} </td>
-				     				<td class="text-left padding-left-20">
-										<span>${'${'}url}</span>
+				     				<td>
+										<span>[ ${'${'}projectName} ] <br/> ${'${'}description}</span>
 										<span></span>
 									</td>
-									<td style="line-height:50px;">${'${'}method}</td>
+				     				<td class="text-left padding-left-20">
+										<span style="width: 97%;">${'${'}url}</span>
+										<span></span>
+									</td>
+									<td>
+										<span>${'${'}method}</span>
+										<span></span>
+									</td>
 				     				<td>
 				     					<button class="btn btn-primary btn-xs open-update-modal">修改</button>
 				     					<button class="btn btn-primary btn-xs delete-testcase">删除</button>

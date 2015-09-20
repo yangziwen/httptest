@@ -58,7 +58,7 @@ define(function(require, exports, module) {
 				baseUrl = $tr.data('baseurl');
 			var id = $tr.data('id'),
 				path = $tr.data('path'),
-				method = $tds.eq(2).html(),
+				method = $tds.eq(2).children('span:nth-child(1)').html(),
 				description = $tr.data('description');
 			var $modal = $('#J_testCaseModal');
 			$modal.find('.modal-title > strong').html('修改用例信息');
