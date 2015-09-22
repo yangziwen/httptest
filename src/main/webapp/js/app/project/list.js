@@ -112,7 +112,7 @@ define(function(require, exports, module) {
 	}
 	/** 新增project结束 **/
 	
-	/** 修改pageInfo开始 **/
+	/** 修改project开始 **/
 	function initOpenUpdateModalBtn() {
 		$('#J_projectTbody').on('click', 'button.open-update-modal', function() {
 			var $this = $(this);
@@ -220,7 +220,7 @@ define(function(require, exports, module) {
 			var $tr = $(this).parents('tr').eq(0),
 				$tds = $tr.children();
 			var projectId = $tr.data('id'),
-				projectName = $tds.eq(0).html(),
+				projectName = $tds.eq(0).children('a').html(),
 				baseUrl = $tds.eq(1).html();
 			var $modal = $('#J_testCaseModal');
 			common.clearForm($modal.find('form'));

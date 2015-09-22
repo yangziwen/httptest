@@ -103,11 +103,13 @@
 				     		</tbody>
 							<script type="text/x-jquery-tmpl" id="J_testCaseTmpl">
 								<tr data-id="${'${'}id}" data-path="${'${'}path}" 
-										data-baseurl="${'${'}baseUrl}" data-project-name="${'${'}projectName}"
+										data-baseurl="${'${'}baseUrl}" 
+										data-project-id="${'${'}projectId}"
+										data-project-name="${'${'}projectName}"
 										data-description="${'${'}description}"
 										title="${'${'} '[' + projectName + '] ' + description}">
 				     				<td>
-										<span>[ ${'${'}projectName} ] <br/> ${'${'}description}</span>
+										<span><a href="javascript:void(0);">[ ${'${'}projectName} ]</a> <br/> ${'${'}description}</span>
 										<span></span>
 									</td>
 				     				<td class="text-left padding-left-20">

@@ -50,6 +50,77 @@ define(function(require, exports, module) {
 		});
 	}
 	
+	/** 新增testCase开始 **/
+	function initOpenCreateModalBtn() {
+		$('#J_testCaseTbody').on('click', 'tr td:nth-child(1) a', function() {
+			var $tr = $(this).parents('tr').eq(0),
+				$tds = $tr.children();
+			var projectId = $tr.data('project-id'),
+				projectName = $tr.data('project-name'),
+				baseUrl = $tr.data('baseurl');
+			var $modal = $('#J_testCaseModal');
+			common.clearForm($modal.find('form'));
+			$modal.find('.modal-title > strong').html('新增用例信息');
+			$modal.find('input[name=id]').val('');
+			$modal.find('input[name=projectId]').val(projectId);
+			$modal.find('input[name=projectName]').val(projectName)
+				.attr({disabled: true, title: projectName});
+			$modal.find('input[name=baseUrl]').val(baseUrl)
+				.attr({disabled: true, title: baseUrl});
+			$modal.find('select[name=method]').val('GET');
+			$modal.find('.modal-dialog').css({
+				width: 500,
+				'margin-top': function() {
+					return ( $(window).height() - 400 ) / 2;
+				}
+			});
+			$modal.find('button.create-testcase').show();
+			$modal.find('button.update-testcase').hide();
+			$modal.modal({
+				backdrop: 'static'
+			});
+		});
+	}
+	
+	function initCreateTestCaseBtn() {
+		$('#J_testCaseModal').on('click', 'button.create-testcase', function() {
+			if(!testCaseValidator.form()) {
+				return;
+			}
+			var params = {
+				projectId: $('#TC_projectId').val(),
+				path: $('#TC_path').val(),
+				description: $('#TC_description').val(),
+				method: $('#TC_method').val()
+			}
+			doCreateTestCase(params);
+		});
+	}
+	
+	function doCreateTestCase(params) {
+		$.ajax({
+			url: CTX_PATH + '/testcase/create',
+			type: 'POST',
+			dataType: 'json',
+			data: params,
+			success: function(data) {
+				if(data.code !== 0) {
+					common.alertMsg('创建失败!');
+					return;
+				} else {
+					common.alertMsg('创建成功!').done(function() {
+						$('#J_testCaseModal').modal('hide');
+					});
+					refreshTestCaseTbl();
+				}
+			}, 
+			error: function() {
+				common.alertMsg('请求失败!');
+			}
+		});
+	}
+	/** 新增testCase结束 **/
+	
 	/** 修改testCase开始 **/
 	function initOpenUpdateModalBtn() {
 		$('#J_testCaseTbody').on('click', 'button.open-update-modal', function() {
@@ -438,6 +509,9 @@ define(function(require, exports, module) {
 	}
 	
 	function initTestCaseOperations() {
+		initOpenCreateModalBtn();
+		initCreateTestCaseBtn();
+		
 		initOpenUpdateModalBtn();
 		initUpdateTestCaseBtn();
 		initDeleteTestCaseBtn();
