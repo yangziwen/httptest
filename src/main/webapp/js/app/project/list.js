@@ -36,8 +36,10 @@ define(function(require, exports, module) {
 		});
 	}
 	
+	$.template('projectTmpl', $('#J_projectTmpl').html().replace(/>(?:\n|\s)+</g, '><'));
+	
 	function renderProjectTbody(list) {
-		$('#J_projectTbody').empty().append($('#J_projectTmpl').tmpl(list));
+		$('#J_projectTbody').empty().append($.tmpl('projectTmpl', list));
 	}
 	
 	function refreshProjectTbl() {

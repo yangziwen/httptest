@@ -33,8 +33,10 @@ define(function(require, exports, module) {
 		});
 	}
 	
+	$.template('testCaseTmpl', $('#J_testCaseTmpl').html().replace(/>(?:\n|\s)+</g, '><'));
+	
 	function renderTestCaseTbody(list) {
-		$('#J_testCaseTbody').empty().append($('#J_testCaseTmpl').tmpl(list));
+		$('#J_testCaseTbody').empty().append($.tmpl('testCaseTmpl', list));
 	}
 	
 	function refreshTestCaseTbl() {

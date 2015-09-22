@@ -30,12 +30,12 @@ seajs.config({
 Date.prototype.format = function(format) {
 	format || (format = 'yyyy-MM-dd');
 	var o = {
-		"M+" : this.getMonth() + 1, // month
-		"d+" : this.getDate(), // day
-		"h+" : this.getHours(), // hour
-		"m+" : this.getMinutes(), // minute
-		"s+" : this.getSeconds(), // second
-		"q+" : Math.floor((this.getMonth() + 3) / 3), // quarter
+		"M+" : this.getMonth() + 1,
+		"d+" : this.getDate(),
+		"h+" : this.getHours(),
+		"m+" : this.getMinutes(),
+		"s+" : this.getSeconds(),
+		"q+" : Math.floor((this.getMonth() + 3) / 3),
 		"S" : this.getMilliseconds()
 	};
 	if (/(y+)/.test(format)) {

@@ -5,6 +5,14 @@
 <head>
     <title>Http接口测试工具</title>
 	<%@ include file="../include/includeCss.jsp" %>
+	<style>
+		#J_projectTbody tr td button {
+			margin-right: 4px;
+		}
+		#J_projectTbody tr td:nth-last-child(1) {
+			padding-right: 0px;
+		}
+	</style>
 </head>
 <body>
 
@@ -39,6 +47,7 @@
 							<div class="form-group" style="margin-bottom: 0px;">
 								<div class="col-sm-12" style="margin-top: 10px;">
 									<button id="J_queryBtn" type="button" class="btn btn-primary btn-lg-font" style="width: 90px;">查&nbsp;&nbsp;询</button>
+									&nbsp;
 									<button id="J_clearBtn" type="button"  class="btn btn-primary btn-lg-font" style="width: 90px;">清除条件</button>
 								</div>
 							</div>
