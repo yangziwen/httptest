@@ -70,29 +70,25 @@ public class JspCompressor {
 			filePath,
 			toDisplaySize(srcSize),
 			toDisplaySize(targetSize),
-			toFixed(targetSize * 100d / srcSize, 2, "%")
+			toFixed(targetSize * 100d / srcSize, 2).replaceFirst("0+$", "") + "%"
 		));
 	}
 	
 	private static final String[] SIZE_UNITS = {"b", "kb", "mb", "gb", "tb", "pb"};
 	
 	private static String toDisplaySize(long size) {
-		double s = size + 0d;
-		int i = 0, l = SIZE_UNITS.length;
-		for(; i < l; i++) {
+		double s = size;
+		for(int i = 0, l = SIZE_UNITS.length; i < l; i++) {
 			if(s / 1024 < 1 || i == l - 1) {
-				return toFixed(s, 2, SIZE_UNITS[i]);
+				return toFixed(s, 2).replaceFirst("\\.0+$", "") + SIZE_UNITS[i];
 			}
 			s /= 1024;
 		}
 		throw new IllegalStateException("Impossible to touch this line!");
 	}
 	
-	private static String toFixed(double num, int digits, String unit) {
-		if(unit == null) {
-			unit = "";
-		}
-		return String.format("%." + digits + "f", num).replaceFirst("\\.0+$", "") + unit;
+	private static String toFixed(double num, int decimalPlace) {
+		return String.format("%." + decimalPlace + "f", num);
 	}
 	
 }
