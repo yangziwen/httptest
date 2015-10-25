@@ -12,11 +12,11 @@ public class Profiles {
 	public static final String ACTIVE_PROFILE = "spring.profiles.active";
 	public static final String DEFAULT_PROFILE = "spring.profiles.default";
 
-	public static final String PRODUCTION = "production";
-	public static final String DEVELOPMENT = "development";
-	public static final String DEVELOPMENT_INIT = "development-init";
+	public static final String PROD = "prod";
+	public static final String DEV = "dev";
+	public static final String DEV_INIT = "dev-init";
 	public static final String UNIT_TEST = "test";
-	public static final String FUNCTIONAL_TEST = "functional";
+	public static final String FUNC_TEST = "func-test";
 
 	/**
 	 * 在Spring启动前，设置profile的环境变量。

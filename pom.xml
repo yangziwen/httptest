@@ -15,7 +15,6 @@
 		<slf4j.version>1.4.2</slf4j.version>
 		<log4j.version>1.2.14</log4j.version>
 		<jetty.version>7.6.11.v20130520</jetty.version>
-		<spring.profiles.active>development</spring.profiles.active>
 	</properties>
 	
 	<dependencies>
@@ -164,6 +163,28 @@
 	
 	<profiles>
 		<profile>
+			<id>prod</id>
+			<properties>
+				<env>prod</env>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<env>dev</env>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>dev-init</id>
+			<properties>
+				<env>dev</env>
+			</properties>
+		</profile>
+		
+		<profile>
 			<id>init-db</id>
 			<build>
 				<plugins>
@@ -286,7 +307,23 @@
 	</profiles>
 	
 	<build>
+	
 		<finalName>httptest</finalName>
+		
+		<filters>
+			<filter>src/main/resources/filters/filter-${env}.properties</filter>
+		</filters>
+	
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>filters/*</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -321,7 +358,7 @@
 						</connector>
 					</connectors>
 					<systemProperties>
-						<spring.profiles.active>${spring.profiles.active}</spring.profiles.active>
+						<spring.profiles.active>${env}</spring.profiles.active>
 					</systemProperties>
 				</configuration>
 			</plugin>
@@ -334,7 +371,7 @@
 					<port>8989</port>
 					<uriEncoding>UTF-8</uriEncoding>
 					<systemProperties>
-						<spring.profiles.active>${spring.profiles.active}</spring.profiles.active>
+						<spring.profiles.active>${env}</spring.profiles.active>
 					</systemProperties>
 				</configuration>
 			</plugin>

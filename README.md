@@ -11,7 +11,7 @@
 
 &ensp;&ensp;**2.生成war包**
 
-&ensp;&ensp;`mvn clean package -Pcompress -Pstandalone`
+&ensp;&ensp;`mvn clean package -Pcompress -Pstandalone -Pprod`
 
 &ensp;&ensp;生成httptest-standalone.war
 

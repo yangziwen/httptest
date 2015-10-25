@@ -22,7 +22,7 @@
 	 
 	<tx:annotation-driven transaction-manager="txManager"/>
     
-    <beans profile="production">
+    <beans profile="prod">
 		<bean id="dataSource"
 			class="org.apache.tomcat.jdbc.pool.DataSource" autowire="no" init-method="createPool" destroy-method="close">
 			<property name="driverClassName" value="org.sqlite.JDBC" />
@@ -32,7 +32,7 @@
 		</bean>
 	</beans>
 	
-	<beans profile="development">
+	<beans profile="dev">
 		<bean id="dataSource"
 			class="org.apache.tomcat.jdbc.pool.DataSource" autowire="no" init-method="createPool" destroy-method="close">
 			<property name="driverClassName" value="org.sqlite.JDBC" />
@@ -42,7 +42,7 @@
 		</bean>
 	</beans>
 	
-	<beans profile="development-init">
+	<beans profile="dev-init">
 		<bean id="dataSource"
 			class="org.apache.tomcat.jdbc.pool.DataSource" autowire="no" init-method="createPool" destroy-method="close">
 			<property name="driverClassName" value="org.sqlite.JDBC" />

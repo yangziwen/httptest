@@ -28,6 +28,14 @@
 			<param name="AcceptOnMatch" value="false" />
 		</filter>
 	</appender>
+	
+	<logger name="net.yangziwen.httptest.dao">
+		<priority value="${jdbc.log.level}" />
+	</logger>
+	
+	<logger name="net.yangziwen.httptest.dao.base">
+		<priority value="info" />
+	</logger>
 
 	<!-- 根logger的设置 -->
 	<root>
@@ -35,4 +43,5 @@
 		<appender-ref ref="Console.Info" />
 		<appender-ref ref="Console.Error" />
 	</root>
+	
 </log4j:configuration>

@@ -77,7 +77,7 @@ public class DBInitiator implements ApplicationListener<ContextRefreshedEvent>, 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws IOException {
 		createDbFileIfNotExist();
-		Profiles.setProfileAsSystemProperty(Profiles.DEVELOPMENT_INIT);
+		Profiles.setProfileAsSystemProperty(Profiles.DEV_INIT);
 		new ClassPathXmlApplicationContext("spring/applicationContext.xml");
 	}
 

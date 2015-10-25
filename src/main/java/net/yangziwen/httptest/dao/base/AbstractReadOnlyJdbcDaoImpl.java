@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +26,6 @@ import net.yangziwen.httptest.util.ClassUtil;
 
 public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 
-	/** SQL_DEBUG == true时，会打印所有查询的sql **/
-	protected static final boolean SQL_DEBUG = BooleanUtils.toBoolean(System.getProperty("jdbc.sql.debug"));
-	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@SuppressWarnings("unchecked")
@@ -72,8 +68,8 @@ public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 	}
 	
 	protected List<E> doList(String sql, Map<String, Object> params, ResultSetExtractor<List<E>> rse) {
-		if(SQL_DEBUG) {
-			return outputLogInfoWithTimespan(now(), jdbcTemplate.query(sql, createSqlParameterSource(params), rse), now(), sql);
+		if(logger.isDebugEnabled()) {
+			return outputDebugInfo(now(), jdbcTemplate.query(sql, createSqlParameterSource(params), rse), now(), sql);
 		}
 		return jdbcTemplate.query(sql, createSqlParameterSource(params), rse);
 	}
@@ -100,8 +96,8 @@ public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 		} else {
 			sql = "select count(*) " + sql.substring(beginPos, endPos);
 		}
-		if(SQL_DEBUG) {
-			return outputLogInfoWithTimespan(now(), jdbcTemplate.queryForObject(sql, params, Integer.class), now(), sql);
+		if(logger.isDebugEnabled()) {
+			return outputDebugInfo(now(), jdbcTemplate.queryForObject(sql, params, Integer.class), now(), sql);
 		}
 		return jdbcTemplate.queryForObject(sql, params, Integer.class);
 	}
@@ -333,8 +329,8 @@ public abstract class AbstractReadOnlyJdbcDaoImpl <E extends AbstractModel> {
 		return "'" + escapeSql(value) + "'";
 	}
 	
-	protected <R> R outputLogInfoWithTimespan(long t1, R result, long t2, String logInfo) {
-		logger.info("[{}ms] {}", t2 - t1, logInfo);
+	protected <R> R outputDebugInfo(long t1, R result, long t2, String logInfo) {
+		logger.debug("[{}ms] {}", t2 - t1, logInfo);
 		return result;
 	}
 	
