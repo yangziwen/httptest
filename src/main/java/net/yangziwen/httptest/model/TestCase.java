@@ -33,6 +33,7 @@ import net.yangziwen.httptest.exception.HttpTestException;
 import net.yangziwen.httptest.model.CaseParam.Type;
 import net.yangziwen.httptest.model.base.AbstractModel;
 import net.yangziwen.httptest.util.EnumUtil.EnumConverter;
+import net.yangziwen.httptest.util.http.HttpEntityEncloseingGet;
 
 @Table(name = "test_case")
 public class TestCase extends AbstractModel {
@@ -120,6 +121,21 @@ public class TestCase extends AbstractModel {
 			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
 				
 				HttpPut put = new HttpPut(url);
+				
+				addHeaders(put, paramList);
+				
+				return fillTextEntity(put, paramList);
+			}
+		},
+		
+		/**
+		 * 一个非标准的get，用于elasticsearch的查询
+		 */
+		ENTITY_ENCLOSEING_GET {
+			@Override
+			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
+				
+				HttpEntityEncloseingGet put = new HttpEntityEncloseingGet(buildUriWithParams(url, paramList));
 				
 				addHeaders(put, paramList);
 				

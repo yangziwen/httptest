@@ -39,6 +39,7 @@
 								<option>POST</option>
 								<option>PUT</option>
 								<option>DELETE</option>
+								<option>ENTITY_ENCLOSEING_GET</option>
 							</select>
 						</div>
 					</div>
