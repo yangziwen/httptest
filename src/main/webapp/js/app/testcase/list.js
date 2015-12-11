@@ -236,6 +236,7 @@ define(function(require, exports, module) {
 	var caseParamTypes = {
 		'PARAM': '一般参数',
 		'UPLOAD_PARAM': '上传参数',
+		'TEXT_ENTITY': '文本请求体',
 		'HEADER': 'header参数',
 		'COOKIE': 'cookie参数'
 	};

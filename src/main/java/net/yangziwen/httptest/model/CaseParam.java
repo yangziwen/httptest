@@ -70,7 +70,7 @@ public class CaseParam extends AbstractModel {
 	}
 
 	public enum Type {
-		PARAM, UPLOAD_PARAM, HEADER, COOKIE;
+		PARAM, UPLOAD_PARAM, HEADER, COOKIE, TEXT_ENTITY;
 	}
 	
 	public static class TypePropertyEditor extends EnumPropertyEditor<Type> {

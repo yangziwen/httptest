@@ -1,7 +1,7 @@
 package net.yangziwen.httptest.model;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -11,13 +11,19 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.http.Consts;
+import org.apache.http.HttpMessage;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -100,101 +106,143 @@ public class TestCase extends AbstractModel {
 		GET {
 			@Override
 			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
-				HttpGet get = null;
-				try {
-					URIBuilder builder = new URIBuilder(url);
-					for(CaseParam param: paramList) {
-						if(param.getType() == CaseParam.Type.PARAM) {
-							builder.setParameter(param.getName(), param.getValue());
-						}
-					}
-					get = new HttpGet(builder.build());
-				} catch (URISyntaxException e) {
-					throw HttpTestException.illegalUrlException("Url is invalid [%s]", url);
-				}
-				for(CaseParam param: paramList) {
-					if(param.getType() == CaseParam.Type.HEADER) {
-						get.addHeader(param.getName(), param.getValue());
-					}
-				}
+				
+				HttpGet get = new HttpGet(buildUriWithParams(url, paramList));
+				
+				addHeaders(get, paramList);
+				
 				return get;
 			}
 		}, 
 		
+		PUT {
+			@Override
+			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
+				
+				HttpPut put = new HttpPut(url);
+				
+				addHeaders(put, paramList);
+				
+				return fillUrlEncodedTextEntity(put, paramList);
+			}
+		},
+		
 		POST {
 			@Override
 			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
+				
 				HttpPost post = new HttpPost(url);
 				
-				boolean needMultipart = false;
-				for(CaseParam cp: paramList) {
-					if(cp.getType() == Type.UPLOAD_PARAM) {
-						needMultipart = true;
-						break;
-					}
-				}
+				addHeaders(post, paramList);
 				
-				return needMultipart
+				return needMultipart(paramList)
 						? fillMultipartEntity(post, paramList)
 						: fillUrlEncodedFormEntity(post, paramList);
 			}
 			
-			/** 文件上传 **/
-			private HttpPost fillMultipartEntity(HttpPost post, List<CaseParam> paramList) {
-				MultipartEntityBuilder builder = MultipartEntityBuilder.create()
-						.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-						.setCharset(DEFAULT_CHARSET);
-
-				ContentType contentType = ContentType.create("text/plain", DEFAULT_CHARSET);
-
-				for (CaseParam param : paramList) {
-					switch (param.getType()) {
-						case PARAM:
-							builder.addTextBody(param.getName(), param.getValue(), contentType);
-							break;
-						case UPLOAD_PARAM:
-							File file = new File(param.getValue());
-							if (!file.exists()) {
-								throw HttpTestException.notExistException("File does not exist! [%s]", param.getValue());
-							}
-							builder.addBinaryBody(param.getName(), file);
-							break;
-						case HEADER:
-							post.addHeader(param.getName(), param.getValue());
-							break;
-						default:;
-					}
-				}
-				post.setEntity(builder.build());
-				return post;
-			}
-			
-			/** 表单提交 **/
-			private HttpPost fillUrlEncodedFormEntity(HttpPost post, List<CaseParam> paramList) {
-				List<NameValuePair> params = new ArrayList<NameValuePair>();
-				for (CaseParam param : paramList) {
-					switch (param.getType()) {
-						case PARAM:
-							params.add(new BasicNameValuePair(param.getName(), param.getValue()));
-							break;
-						case HEADER:
-							post.addHeader(param.getName(), param.getValue());
-							break;
-						default:;
-					}
-				}
-				try {
-					post.setEntity(new UrlEncodedFormEntity(params));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-				return post;
+		},
+		
+		DELETE {
+			@Override
+			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
+				
+				HttpDelete delete = new HttpDelete(buildUriWithParams(url, paramList));
+				
+				addHeaders(delete, paramList);
+				
+				return delete;
 			}
 		};
 		
-		public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+		public static final Charset DEFAULT_CHARSET = Consts.UTF_8;
 		
 		public abstract HttpUriRequest createRequest(String url, List<CaseParam> paramList);
+		
+		protected static boolean needMultipart(List<CaseParam> paramList) {
+			for(CaseParam cp: paramList) {
+				if(cp.getType() == Type.UPLOAD_PARAM) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		/** 文件上传 **/
+		protected static <R extends HttpEntityEnclosingRequestBase> R fillMultipartEntity(R request, List<CaseParam> paramList) {
+			MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+					.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+					.setCharset(DEFAULT_CHARSET);
+
+			ContentType contentType = ContentType.create("text/plain", DEFAULT_CHARSET);
+
+			for (CaseParam param : paramList) {
+				switch (param.getType()) {
+					case PARAM:
+						builder.addTextBody(param.getName(), param.getValue(), contentType);
+						break;
+					case UPLOAD_PARAM:
+						File file = new File(param.getValue());
+						if (!file.exists()) {
+							throw HttpTestException.notExistException("File does not exist! [%s]", param.getValue());
+						}
+						builder.addBinaryBody(param.getName(), file);
+						break;
+					default:;
+				}
+			}
+			request.setEntity(builder.build());
+			return request;
+		}
+		
+		/** 表单提交 **/
+		protected static <R extends HttpEntityEnclosingRequestBase> R fillUrlEncodedFormEntity(R request, List<CaseParam> paramList) {
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			for (CaseParam param : paramList) {
+				if (param.getType() == CaseParam.Type.PARAM) {
+					params.add(new BasicNameValuePair(param.getName(), param.getValue()));
+				}
+			}
+			request.setEntity(new UrlEncodedFormEntity(params, DEFAULT_CHARSET));
+			return request;
+		}
+		
+		/** 
+		 * 文本内容填充请求体
+		 * paramList中存在多个TEXT_ENTITY类型的参数时，
+		 * 只有第一个TEXT_ENTITY类型的参数有效
+		 */
+		protected static <R extends HttpEntityEnclosingRequestBase> R fillUrlEncodedTextEntity(R request, List<CaseParam> paramList) {
+			for(CaseParam param: paramList) {
+				if(param.getType() == CaseParam.Type.TEXT_ENTITY) {
+					request.setEntity(new StringEntity(param.getValue(), DEFAULT_CHARSET));
+					break;
+				}
+			}
+			return request;
+		}
+		
+		protected static <R extends HttpMessage> R addHeaders(R request, List<CaseParam> paramList) {
+			for(CaseParam param: paramList) {
+				if(param.getType() == CaseParam.Type.HEADER) {
+					request.addHeader(param.getName(), param.getValue());
+				}
+			}
+			return request;
+		}
+		
+		protected static URI buildUriWithParams(String url, List<CaseParam> paramList) {
+			try {
+				URIBuilder builder = new URIBuilder(url);
+				for(CaseParam param: paramList) {
+					if(param.getType() == CaseParam.Type.PARAM) {
+						builder.setParameter(param.getName(), param.getValue());
+					}
+				}
+				return builder.build();
+			} catch (URISyntaxException e) {
+				throw HttpTestException.illegalUrlException("Url is invalid [%s]", url);
+			}
+		}
 		
 	}
 	
