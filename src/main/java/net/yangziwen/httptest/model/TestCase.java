@@ -12,11 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.http.Consts;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpMessage;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -123,7 +123,7 @@ public class TestCase extends AbstractModel {
 				
 				addHeaders(put, paramList);
 				
-				return fillUrlEncodedTextEntity(put, paramList);
+				return fillTextEntity(put, paramList);
 			}
 		},
 		
@@ -168,7 +168,7 @@ public class TestCase extends AbstractModel {
 		}
 		
 		/** 文件上传 **/
-		protected static <R extends HttpEntityEnclosingRequestBase> R fillMultipartEntity(R request, List<CaseParam> paramList) {
+		protected static <R extends HttpEntityEnclosingRequest> R fillMultipartEntity(R request, List<CaseParam> paramList) {
 			MultipartEntityBuilder builder = MultipartEntityBuilder.create()
 					.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
 					.setCharset(DEFAULT_CHARSET);
@@ -195,7 +195,7 @@ public class TestCase extends AbstractModel {
 		}
 		
 		/** 表单提交 **/
-		protected static <R extends HttpEntityEnclosingRequestBase> R fillUrlEncodedFormEntity(R request, List<CaseParam> paramList) {
+		protected static <R extends HttpEntityEnclosingRequest> R fillUrlEncodedFormEntity(R request, List<CaseParam> paramList) {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			for (CaseParam param : paramList) {
 				if (param.getType() == CaseParam.Type.PARAM) {
@@ -211,7 +211,7 @@ public class TestCase extends AbstractModel {
 		 * paramList中存在多个TEXT_ENTITY类型的参数时，
 		 * 只有第一个TEXT_ENTITY类型的参数有效
 		 */
-		protected static <R extends HttpEntityEnclosingRequestBase> R fillUrlEncodedTextEntity(R request, List<CaseParam> paramList) {
+		protected static <R extends HttpEntityEnclosingRequest> R fillTextEntity(R request, List<CaseParam> paramList) {
 			for(CaseParam param: paramList) {
 				if(param.getType() == CaseParam.Type.TEXT_ENTITY) {
 					request.setEntity(new StringEntity(param.getValue(), DEFAULT_CHARSET));
