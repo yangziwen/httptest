@@ -42,7 +42,7 @@
 											<th width="30%">参数名</th>
 											<th width="30%">参数值</th>
 											<th width="10%" style="line-height: 0px;">
-												<a class="add-case-param-btn" href="###" style="font-size: 20px;" title="添加参数">
+												<a class="add-case-param-btn" href="javascript:void(0);" style="font-size: 20px;" title="添加参数">
 													<i class="glyphicon glyphicon-plus-sign"></i>
 												</a>
 											</th>
@@ -60,7 +60,7 @@
 				     						<td><input type="text" class="input-sm form-control case-param-name" value="${'${'}name}" /></td>
 				     						<td><input type="text" class="input-sm form-control case-param-value" value="${'${'}value}" /></td>
 				     						<td style="line-height: 0px;">
-												<a tabindex="-1" href="###" style="font-size:20px;" title="删除参数" class="remove-case-param-btn">
+												<a tabindex="-1" href="javascript:void(0);" style="font-size:20px;" title="删除参数" class="remove-case-param-btn">
 													<i class="glyphicon glyphicon-minus-sign"></i>
 												</a>
 											</td>
