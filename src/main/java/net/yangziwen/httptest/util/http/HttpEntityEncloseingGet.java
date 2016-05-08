@@ -12,8 +12,6 @@ import org.apache.http.client.methods.HttpGet;
  */
 public class HttpEntityEncloseingGet extends HttpEntityEnclosingRequestBase {
 
-    public final static String METHOD_NAME = HttpGet.METHOD_NAME;
-
     public HttpEntityEncloseingGet() {
         super();
     }
@@ -30,7 +28,7 @@ public class HttpEntityEncloseingGet extends HttpEntityEnclosingRequestBase {
 
     @Override
     public String getMethod() {
-        return METHOD_NAME;
+        return HttpGet.METHOD_NAME;
     }
 
 }

@@ -34,6 +34,7 @@ import net.yangziwen.httptest.model.CaseParam.Type;
 import net.yangziwen.httptest.model.base.AbstractModel;
 import net.yangziwen.httptest.util.EnumUtil.EnumConverter;
 import net.yangziwen.httptest.util.http.HttpEntityEncloseingGet;
+import net.yangziwen.httptest.util.http.HttpEntityEncloseingPost;
 
 @Table(name = "test_case")
 public class TestCase extends AbstractModel {
@@ -135,11 +136,11 @@ public class TestCase extends AbstractModel {
 			@Override
 			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
 				
-				HttpEntityEncloseingGet put = new HttpEntityEncloseingGet(buildUriWithParams(url, paramList));
+				HttpEntityEncloseingGet get = new HttpEntityEncloseingGet(buildUriWithParams(url, paramList));
 				
-				addHeaders(put, paramList);
+				addHeaders(get, paramList);
 				
-				return fillTextEntity(put, paramList);
+				return fillTextEntity(get, paramList);
 			}
 		},
 		
@@ -154,6 +155,23 @@ public class TestCase extends AbstractModel {
 				return needMultipart(paramList)
 						? fillMultipartEntity(post, paramList)
 						: fillUrlEncodedFormEntity(post, paramList);
+			}
+			
+		},
+		
+		/**
+		 * 一个非标准的get，用于elasticsearch的查询
+		 */
+		ENTITY_ENCLOSEING_POST {
+
+			@Override
+			public HttpUriRequest createRequest(String url, List<CaseParam> paramList) {
+				
+				HttpEntityEncloseingPost post = new HttpEntityEncloseingPost(url);
+				
+				addHeaders(post, paramList);
+				
+				return fillTextEntity(post, paramList);
 			}
 			
 		},
